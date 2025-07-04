@@ -1,4 +1,5 @@
 <div class="bg-gray-100 min-h-screen">
+  <!-- Header -->
   <div class="bg-[#dbe9f4] text-center p-6">
     <div class="flex">
       <div class="flex-6 p-3">
@@ -14,7 +15,7 @@
           procesos administrativos de tu ingreso al Sistema de Educación Abierta
         </p>
       </div>
-      <div class="bg-[#2596be] p-3 ps-6 w-64 flex items-center justify-center">
+      <div class="bg-sky-600 p-3 ps-6 w-64 flex items-center justify-center">
         <img
           src="cobach-logo.png"
           alt="Colegio de Bachilleres de Chiapas"
@@ -23,245 +24,88 @@
       </div>
     </div>
   </div>
-  <div class="max-w-7xl mx-auto mt-4">
-    <form action="" class="bg-white rounded-lg shadow-lg overflow-hidden">
-      <div class="bg-slate-800 py-6 text-center">
-        <span class="text-white text-3xl">Datos escolares</span>
-      </div>
-      <div class="p-6 space-y-6">
-        <label for="primeraVez" class="block mb-4 text-lg"
-          >¿Es la primera vez que te inscribes a un bachillerato?</label
-        >
-        <div class="space-y-3">
-          <label class="flex items-center">
-            <input
-              type="radio"
-              name="primeraVez"
-              value="si"
-              [(ngModel)]="data.primeraVez"
-              class="mr-3 text-blue-600"
-            />
-            <span class="bg-gray-100 px-3 py-2 rounded"
-              >Sí, nunca me he inscrito antes</span
-            >
-          </label>
-          <label class="flex items-center">
-            <input
-              type="radio"
-              name="primeraVez"
-              value="no-cobach"
-              [(ngModel)]="data.primeraVez"
-              class="mr-3 text-blue-600"
-            />
-            <span class="bg-gray-100 px-3 py-2 rounded"
-              >No, ya estudié en COBACH anteriormente</span
-            ></label
-          >
-          <label class="flex items-center">
-            <input
-              type="radio"
-              name="primeraVez"
-              value="no-otra"
-              [(ngModel)]="data.primeraVez"
-              class="mr-3 text-blue-600"
-            />
-            <span class="bg-gray-100 px-3 py-2 rounded"
-              >No, vengo de una escuela diferente a COBACH</span
-            >
-          </label>
-        </div>
-        <label for="primeraVez" class="block mb-4 text-lg"
-          >Ingrese su matrícula</label
-        >
-        <input
-          type="text"
-          [(ngModel)]="data.matricula"
-          name="matricula"
-          class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-blue-50"
-          placeholder="Número de matrícula"
-        />
-      </div>
-    </form>
-  </div>
-</div>
-
-<div class="bg-gray-100 min-h-screen">
-  <div class="bg-[#dbe9f4]">
-    <div class="flex items-center justify-between">
-      <div class="flex-1 bg-slate-800 text-white p-8 relative">
-        <h1 class="text-3xl font-bold mb-4">SOLICITUD DE PRE-INSCRIPCIÓN</h1>
-        <p class="text-sm leading-relaxed opacity-90">
-          El presente formulario tiene la finalidad de codificar tus datos, los
-          cuáles están resguardados y nos permite iniciar tu expediente para los
-          procesos administrativos de tu ingreso al Sistema de Educación Abierta
-        </p>
-
-        <div
-          class="absolute right-0 top-0 w-32 h-full bg-slate-800 transform skew-x-[-12deg] translate-x-8"
-        ></div>
-      </div>
-
-      <div
-        class="bg-sky-600 text-white ms-4 p-6 text-center min-w-[140px] min-h-[140px] flex items-center justify-center"
-        style="width: 140px; height: 140px"
-      >
-        <img
-          src="cobach-logo.png"
-          alt="Colegio de Bachilleres de Chiapas"
-          class="w-full h-full object-contain"
-          style="width: 100%; height: 100%"
-        />
-      </div>
-    </div>
-  </div>
-
-  <div class="max-w-6xl mx-auto p-8">
+  <div class="max-w-5xl mx-auto p-8 mt-4">
     <form
-      #formulario="ngForm"
+      [formGroup]="formulario"
       (ngSubmit)="submit()"
       class="bg-white rounded-lg shadow-lg overflow-hidden"
     >
-      <!-- Sección: Datos Escolares -->
-      <div class="mb-8">
-        <div class="bg-slate-700 text-white p-4 flex items-center">
-          <div class="w-1 h-8 bg-blue-400 mr-4"></div>
-          <h2 class="text-lg font-semibold">Datos Escolares</h2>
-        </div>
-
-        <div class="p-6 space-y-6">
-          <!-- Primera vez -->
-          <div>
-            <label class="block text-gray-700 font-medium mb-4 text-sm">
-              ¿Es la primera vez que te inscribe un bachillerato?
+      <!-- Datos Escolares -->
+      <div class="bg-slate-800 py-6 px-6 flex items-center">
+        <div class="w-1 h-8 bg-blue-400 mr-4"></div>
+        <span class="text-white text-2xl">Datos escolares</span>
+      </div>
+      <div class="p-6 space-y-6">
+        <!-- Primera vez -->
+        <div class="bg-slate-100 rounded-lg p-3">
+          <label for="primeraVez" class="block px-1 mb-3 text-lg"
+            >¿Es la primera vez que te inscribes a un bachillerato?</label
+          >
+          <div class="space-y-3">
+            <label class="flex items-center">
+              <input
+                (change)="primeraVez('si')"
+                type="radio"
+                name="primeraVez"
+                id="primeraVez"
+                value="si"
+                class="mr-3 peer/primeraVez hidden"
+              />
+              <span
+                class="bg-gray-300/50 px-3 py-2 rounded-xl peer-checked/primeraVez:bg-indigo-600 peer-checked/primeraVez:text-white transition hover:cursor-pointer"
+                >Sí, es mi primera vez estudiando un bachillerato</span
+              >
             </label>
-            <div class="space-y-3">
-              <label class="flex items-center">
-                <input
-                  type="radio"
-                  name="primeraVez"
-                  value="si"
-                  [(ngModel)]="data.primeraVez"
-                  class="mr-3 text-blue-600"
-                />
-                <span class="text-sm bg-gray-100 px-3 py-2 rounded"
-                  >Sí, nunca me he inscrito antes</span
-                >
-              </label>
-              <label class="flex items-center">
-                <input
-                  type="radio"
-                  name="primeraVez"
-                  value="no-cobach"
-                  [(ngModel)]="data.primeraVez"
-                  class="mr-3 text-blue-600"
-                />
-                <span class="text-sm bg-gray-100 px-3 py-2 rounded"
-                  >No, ya estudié en Cobach anteriormente</span
-                >
-              </label>
-              <label class="flex items-center">
-                <input
-                  type="radio"
-                  name="primeraVez"
-                  value="no-otra"
-                  [(ngModel)]="data.primeraVez"
-                  class="mr-3 text-blue-600"
-                />
-                <span class="text-sm bg-gray-100 px-3 py-2 rounded"
-                  >No, vengo de una escuela diferente a Cobach</span
-                >
-              </label>
-            </div>
-          </div>
-          <!-- Número de matrícula -->
-          <div>
-            <label class="block text-gray-700 font-medium mb-3 text-sm">
-              Escribe tu número de matrícula:
-            </label>
-            <input
-              type="text"
-              [(ngModel)]="data.matricula"
-              name="matricula"
-              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Número de matrícula"
-            />
-          </div>
-
-          <!-- Sede -->
-          <div>
-            <label class="block text-gray-700 font-medium mb-3 text-sm">
-              Selecciona la sede a la que se inscribe
-            </label>
-            <select
-              [(ngModel)]="data.sede"
-              name="sede"
-              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-blue-50"
+            <label class="flex items-center">
+              <input
+                (change)="primeraVez('no-cobach')"
+                type="radio"
+                name="primeraVez"
+                id="primeraVez-no-cobach"
+                value="no-cobach"
+                class="mr-3 peer/primeraVez hidden"
+              />
+              <span
+                class="bg-gray-300/50 px-3 py-2 rounded-xl peer-checked/primeraVez:bg-indigo-600 peer-checked/primeraVez:text-white transition hover:cursor-pointer"
+                >No, he estudiado antes en COBACH</span
+              ></label
             >
-              <option value="">Selecciona una sede</option>
-              <option value="tuxtla">Tuxtla Gutiérrez</option>
-              <option value="tapachula">Tapachula</option>
-              <option value="comitan">Comitán</option>
-              <option value="palenque">Palenque</option>
-              <option value="san-cristobal">San Cristóbal</option>
-            </select>
+            <label class="flex items-center">
+              <input
+                (change)="primeraVez('no-otra')"
+                type="radio"
+                name="primeraVez"
+                id="primeraVez-no-otra"
+                value="no-otra"
+                class="mr-3 peer/primeraVez hidden"
+              />
+              <span
+                class="bg-gray-300/50 px-3 py-2 rounded-xl peer-checked/primeraVez:bg-indigo-600 peer-checked/primeraVez:text-white transition hover:cursor-pointer"
+                >No, vengo de una escuela diferente a COBACH</span
+              >
+            </label>
+          </div>
+        </div>
+        <!-- Matricula -->
+        @if (formulario.get('matricula'?.disabled ?? false)) {}
+        <div class="bg-slate-100 rounded-lg p-3">
+          <label
+            for="matricula"
+            class="peer-disabled/matricula:text-gray-100 block px-1 mb-3 text-lg"
+            >Ingrese su matrícula</label
+          >
+          <input
+            type="text"
+            formControlName="matricula"
+            id="matricula"
+            class="peer/matricula w-full max-w-md px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50"
+            placeholder="Número de matrícula"
+          />
+          <div class="px-1 text-gray-600 peer-disabled/matricula:text-blue">
+            Máximo 15 caracteres
           </div>
         </div>
       </div>
-
-      <!-- Sección: Datos Personales -->
-      <div class="mb-8">
-        <div class="bg-slate-700 text-white p-4 flex items-center">
-          <div class="w-1 h-8 bg-blue-400 mr-4"></div>
-          <h2 class="text-lg font-semibold">Datos Personales</h2>
-        </div>
-
-        <div class="p-6 space-y-6">
-          <!-- Correo electrónico -->
-          <div>
-            <label class="block text-gray-700 font-medium mb-3 text-sm">
-              Correo electrónico
-            </label>
-            <input
-              type="email"
-              [(ngModel)]="data.correo"
-              name="correo"
-              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-blue-50"
-              placeholder="correo@ejemplo.com"
-            />
-          </div>
-
-          <!-- Número de teléfono -->
-          <div>
-            <label class="block text-gray-700 font-medium mb-3 text-sm">
-              Número de teléfono
-            </label>
-            <input
-              type="text"
-              [(ngModel)]="data.telefono"
-              name="telefono"
-              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-blue-50"
-              placeholder="1234567"
-            />
-          </div>
-
-          <!-- Nacionalidad -->
-          <div>
-            <label class="block text-gray-700 font-medium mb-3 text-sm">
-              Selecciona tu nacionalidad
-            </label>
-            <select
-              [(ngModel)]="data.nacionalidad"
-              name="nacionalidad"
-              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-blue-50"
-            >
-              <option value="">Selecciona tu nacionalidad</option>
-              <option value="M">Mexicana</option>
-              <option value="E">Extranjera</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
       <!-- Botón de envío -->
       <div class="p-6 text-center bg-gray-50">
         <button
