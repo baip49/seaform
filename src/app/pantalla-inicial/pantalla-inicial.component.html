@@ -1,0 +1,159 @@
+<div class="bg-gray-100 min-h-screen">
+  <div class="bg-[#dbe9f4] text-center p-6">
+    <div class="flex flex-row items-stretch">
+      <div
+        class="bg-slate-800 px-6 py-12 flex flex-3 items-center justify-center"
+      >
+        <h1 class="text-5xl text-gray-200 font-[700]">
+          Sistema de Enseñanza Abierta (SEA)
+        </h1>
+      </div>
+      <div class="bg-sky-600 p-3 ps-6 w-64 flex items-center justify-center">
+        <img
+          src="cobach-logo.png"
+          alt="Colegio de Bachilleres de Chiapas"
+          class="mix-blend-multiply"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-5xl mx-auto p-8 mt-4">
+    <form
+      [formGroup]="pantallaInicial"
+      (ngSubmit)="submit()"
+      class="bg-white rounded-lg shadow-lg overflow-hidden"
+    >
+      <div class="bg-slate-800 py-6 px-6 flex justify-center">
+        <span class="text-white text-2xl"
+          >¿Tienes matrícula del Colegio de Bachilleres de Chiapas?</span
+        >
+      </div>
+      <div class="bg-slate-100 flex justify-center flex-col">
+        <!-- Tiene matrícula -->
+        <div class="rounded-lg p-3 flex justify-center">
+          <div class="flex space-x-3">
+            <label class="flex items-center">
+              <input
+                (click)="tieneMatricula(true)"
+                type="radio"
+                name="tieneMatricula"
+                id="tieneMatricula"
+                value="true"
+                class="peer/primeraVez hidden"
+                checked
+              />
+              <span
+                class="bg-green-300 px-3 py-2 rounded-xl flex items-center text-xl peer-checked/primeraVez:bg-green-600 peer-checked/primeraVez:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-green-800 hover:shadow-lg"
+                ><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-6 mr-1"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m4.5 12.75 6 6 9-13.5"
+                  />
+                </svg>
+                Tengo matrícula</span
+              >
+            </label>
+            <label class="flex items-center">
+              <input
+                (click)="tieneMatricula(false)"
+                type="radio"
+                name="tieneMatricula"
+                id="noTieneMatricula"
+                value="false"
+                class="peer/primeraVez hidden"
+              />
+              <span
+                class="bg-red-300/50 px-3 py-2 rounded-xl flex items-center text-xl peer-checked/primeraVez:bg-red-600/60 peer-checked/primeraVez:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg"
+                ><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-6 mr-1"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18 18 6M6 6l12 12"
+                  />
+                </svg>
+                No tengo matrícula</span
+              >
+            </label>
+          </div>
+        </div>
+        <!-- Matrícula -->
+        <div class="rounded-lg p-3 w-full flex flex-col items-center">
+          @if (pantallaInicial.get('matricula')?.disabled === false) {
+          <input
+            type="text"
+            formControlName="matricula"
+            id="matricula"
+            class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+            placeholder="Matrícula COBACH"
+          />
+          <div class="text-gray-600 text-lg">Ingresa tu matrícula COBACH</div>
+          }
+          <!-- Tipo -->
+          @else {
+          <label for="tipo1" class="px-1 text-lg"
+            >¿Qué opción te describe mejor?</label
+          >
+          <div class="rounded-lg p-3 flex justify-center">
+            <div class="flex space-x-3">
+              <label class="flex items-center">
+                <input
+                  (click)="tipo(true)"
+                  type="radio"
+                  name="tipo"
+                  id="tipo1"
+                  value="true"
+                  class="peer/primeraVez hidden"
+                  required
+                />
+                <span
+                  class="bg-blue-300 px-3 py-2 rounded-xl flex items-center text-xl peer-checked/primeraVez:bg-sky-600 peer-checked/primeraVez:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-sky-800 hover:shadow-lg"
+                >
+                  Es mi primera vez en un bachillerato</span
+                >
+              </label>
+              <label class="flex items-center">
+                <input
+                  (click)="tipo(false)"
+                  type="radio"
+                  name="tipo"
+                  id="tipo2"
+                  value="false"
+                  class="peer/tipo2 hidden"
+                  required
+                />
+                <span
+                  class="bg-blue-300 px-3 py-2 rounded-xl flex items-center text-xl peer-checked/tipo2:bg-sky-600 peer-checked/tipo2:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-sky-800 hover:shadow-lg"
+                >
+                  Vengo de otra institución</span
+                >
+              </label>
+            </div>
+          </div>
+          }
+          <button
+            type="submit"
+            class="mt-6 bg-cyan-300 px-3 py-2 rounded-xl flex items-center text-xl focus:bg-cyan-600 focus:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-cyan-800 hover:shadow-lg"
+          >
+            Continuar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

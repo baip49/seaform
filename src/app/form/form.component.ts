@@ -19,15 +19,47 @@ export class FormComponent {
 
   constructor(private fb: FormBuilder) {
     this.formulario = this.fb.group({
-      primeraVez: [''],
-      matricula: ['', [Validators.minLength(15)]],
-      sede: [''],
-      correo: [''],
+      id: [null],
+      curp: [''],
+      matricula: ['', [Validators.required]],
+      nombre: [''],
+      apellidoPaterno: [''],
+      apellidoMaterno: [''],
+      fechaNacimiento: [''],
+      sexo: [''],
       telefono: [''],
-      nacionalidad: [''],
+      correo: [''],
+      idSede: ['', [Validators.required, Validators.min(1), Validators.max(4)]],
+      estadoCivil: [''],
+      idNacionalidad: [''],
+      hablalenguaIndigena: [''],
+      lengua: [''],
+      tieneBeca: [''],
+      queBeca: [''],
+      hijoDeTrabjador: [''],
+      idCapturo: [''],
+      fechaTramite: [''],
+      fechaCaptura: [''],
+      idRol: [''],
+      tieneAlergias: [''],
+      alergias: [''],
+      tipoSangre: [''],
+      tieneDiscapacidad: [''],
+      discapacidad: [''],
+      nombreTutor: [''],
+      apellidoMaternoTutor: [''],
+      apellidoPaternoTutor: [''],
+      telefonoTutor: [''],
+      codigoPostal: [''],
+      calle: [''],
+      entreCalles: [''],
+      numeroExterior: [''],
+      numeroInterior: [''],
+      localidad: [''],
     });
   }
 
+  // Primera vez
   primeraVez(value: string) {
     const matriculaControl = this.formulario.get('matricula');
 
@@ -43,12 +75,14 @@ export class FormComponent {
     if (value === 'no-otra') {
       console.log('No, vengo de una escuela diferente a COBACH');
       matriculaControl?.disable();
+      matriculaControl?.setValue('');
     }
   }
 
+  // Enviar
   submit() {
     if (this.formulario.valid) {
-      console.log('Datos del formulario', this.formulario.value);
+      console.log('Formulario validado:', this.formulario.value);
     }
   }
 }

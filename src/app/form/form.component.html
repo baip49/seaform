@@ -44,7 +44,7 @@
           <div class="space-y-3">
             <label class="flex items-center">
               <input
-                (change)="primeraVez('si')"
+                (click)="primeraVez('si')"
                 type="radio"
                 name="primeraVez"
                 id="primeraVez"
@@ -58,7 +58,7 @@
             </label>
             <label class="flex items-center">
               <input
-                (change)="primeraVez('no-cobach')"
+                (click)="primeraVez('no-cobach')"
                 type="radio"
                 name="primeraVez"
                 id="primeraVez-no-cobach"
@@ -72,7 +72,7 @@
             >
             <label class="flex items-center">
               <input
-                (change)="primeraVez('no-otra')"
+                (click)="primeraVez('no-otra')"
                 type="radio"
                 name="primeraVez"
                 id="primeraVez-no-otra"
@@ -87,23 +87,58 @@
           </div>
         </div>
         <!-- Matricula -->
-        @if (formulario.get('matricula'?.disabled ?? false)) {}
+        @if (formulario.get('matricula')?.disabled === false) {
         <div class="bg-slate-100 rounded-lg p-3">
-          <label
-            for="matricula"
-            class="peer-disabled/matricula:text-gray-100 block px-1 mb-3 text-lg"
+          <label for="matricula" class="block px-1 mb-3 text-lg"
             >Ingrese su matrícula</label
           >
           <input
             type="text"
             formControlName="matricula"
             id="matricula"
-            class="peer/matricula w-full max-w-md px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50"
+            class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50"
             placeholder="Número de matrícula"
           />
-          <div class="px-1 text-gray-600 peer-disabled/matricula:text-blue">
-            Máximo 15 caracteres
-          </div>
+          <div class="px-1 text-gray-600">Máximo 15 caracteres</div>
+        </div>
+        }
+        <!-- Sede -->
+        <div class="bg-slate-100 rounded-lg p-3">
+          <label for="sede" class="block px-1 mb-3 text-lg"
+            >Seleccione la sede</label
+          >
+          <select
+            formControlName="idSede"
+            id="idSede"
+            class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50"
+            required
+          >
+            <option value="1">Sede 02 | Tuxtla Gutiérrez</option>
+            <option value="2">Sede 05 | Venustiano Carranza</option>
+            <option value="3">Sede 06 | Comitán</option>
+            <option value="4">Sede 07 | Ocosingo</option>
+          </select>
+        </div>
+      </div>
+      <!-- Datos personales -->
+      <div class="bg-slate-800 py-6 px-6 flex items-center">
+        <div class="w-1 h-8 bg-blue-400 mr-4"></div>
+        <span class="text-white text-2xl">Datos escolares</span>
+      </div>
+      <div class="p-6 space-y-6">
+        <!-- Nombre -->
+        <div class="bg-slate-100 rounded-lg p-3">
+          <label for="matricula" class="block px-1 mb-3 text-lg"
+            >Nombre</label
+          >
+          <input
+            type="text"
+            formControlName="nombre"
+            id="nombre"
+            class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50"
+            placeholder="César Sánchez"
+          />
+          <div class="px-1 text-gray-600">Nombre/s</div>
         </div>
       </div>
       <!-- Botón de envío -->
