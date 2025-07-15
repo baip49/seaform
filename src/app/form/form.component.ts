@@ -31,13 +31,15 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
   buscandoLengua = false;
   lenguaSeleccionada: any = null;
   sangre: any[] = [];
-  
+  esEdicion = false;
+  idAlumnoEditar: number | null = null;
+
   // Datos recibidos del componente anterior
   datosAlumno: any = null;
   tipoIngreso: string = '';
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     private api: ApiService,
     private router: Router
   ) {
@@ -81,12 +83,17 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
       numeroInterior: [''],
       idLocalidad: [''],
     });
-    
+
     // Obtener datos del estado de navegación
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras?.state) {
       this.datosAlumno = navigation.extras.state['datosAlumno'];
-      this.tipoIngreso = navigation.extras.state['tipoIngreso'];
+      this.tipoIngreso = navigation.extras.state['tipo'];
+      this.esEdicion = navigation.extras.state['esEdicion'] || false;
+
+      if (this.esEdicion && this.datosAlumno) {
+        this.idAlumnoEditar = this.datosAlumno.Id || this.datosAlumno.id;
+      }
     }
   }
 
@@ -95,7 +102,7 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.datosAlumno) {
       this.llenarFormulario(this.datosAlumno);
     }
-    
+
     this.terminoLengua
       .pipe(
         debounceTime(500),
@@ -141,33 +148,75 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private llenarFormulario(datos: any) {
+    // Agregar este console.log para depurar
+    console.log('Datos recibidos:', datos);
+    const mapearEstadoCivil = (estado: string) => {
+      switch (estado.toLowerCase()) {
+        case 'soltero':
+          return 'S';
+        case 'casado':
+          return 'C';
+        case 'divorciado':
+          return 'D';
+        default:
+          return estado || 'S';
+      }
+    };
+
+    const mapearNacionalidad = (nacionalidad: string) => {
+      switch (nacionalidad.toLowerCase()) {
+        case 'mexicana':
+          return '1';
+        case 'extranjera':
+          return '2';
+        default:
+          return nacionalidad || '1';
+      }
+    };
+
+    const mapearBooleano = (valor: any): string => {
+      if (valor === true || valor === 1 || valor === '1') {
+        return '1';
+      } else if (valor === false || valor === 0 || valor === '0') {
+        return '0';
+      }
+      return '0';
+    };
+
     const camposAMapear = {
       id: datos.Id,
       curp: datos.CURP,
       matricula: datos.Matricula,
-      nombre: datos.Nombres,
+      nombre: datos.Nombres || datos.Nombre,
       apellidoPaterno: datos.ApellidoPaterno,
       apellidoMaterno: datos.ApellidoMaterno,
-      fechaNacimiento: datos.FechaNacimiento ? this.formatearFecha(datos.FechaNacimiento) : '',
+      fechaNacimiento: datos.FechaNacimiento
+        ? this.formatearFecha(datos.FechaNacimiento)
+        : '',
       sexo: datos.Sexo,
       telefono: datos.Telefono,
       correo: datos.Correo,
-      estadoCivil: datos.EstadoCivil,
-      idNacionalidad: datos.Nacionalidad,
-      hablaLengua: datos.HablaLengua === 1 ? '1' : '0',
-      idLengua: datos.IdLengua || '',
-      tieneBeca: datos.TieneBeca === 1 ? '1' : '0',
+      idSede: datos.IdSede, // Agregado el mapeo para sede
+      estadoCivil: mapearEstadoCivil(datos.EstadoCivil),
+      idNacionalidad: mapearNacionalidad(datos.Nacionalidad),
+      hablaLengua: mapearBooleano(datos.HablaLengua),
+      idLengua: datos.IdLengua,
+      tieneBeca: mapearBooleano(datos.TieneBeca),
       queBeca: datos.QueBeca || '',
       hijoDeTrabjador: datos.HijoDeTrabajador ? 'true' : 'false',
       idCapturo: datos.IdCapturo,
-      fechaTramite: datos.FechaTramite ? this.formatearFecha(datos.FechaTramite) : '',
-      fechaCaptura: datos.FechaCaptura ? this.formatearFecha(datos.FechaCaptura) : '',
+      fechaTramite: datos.FechaTramite
+        ? this.formatearFecha(datos.FechaTramite)
+        : '',
+      fechaCaptura: datos.FechaCaptura
+        ? this.formatearFecha(datos.FechaCaptura)
+        : '',
       idRol: datos.IdRol,
-      tieneAlergias: datos.TieneAlergias === 1 ? '1' : '0',
-      alergias: datos.Alergias || '',
+      tieneAlergias: datos.Alergias && datos.Alergias !== 'Sin alergias' ? '1' : '0',
+      alergias: datos.Alergias && datos.Alergias !== 'Sin alergias' ? datos.Alergias : '',
       tipoSangre: datos.TipoSangre || '',
-      tieneDiscapacidad: datos.TieneDiscapacidad === 1 ? '1' : '0',
-      discapacidad: datos.Discapacidad || '',
+      tieneDiscapacidad: datos.Discapacidad && datos.Discapacidad !== 'Sin discapacidad' ? '1' : '0',
+      discapacidad: datos.Discapacidad && datos.Discapacidad !== 'Sin discapacidad' ? datos.Discapacidad : '',
       nombreTutor: datos.NombreDelTutor || '',
       apellidoPaternoTutor: datos.ApellidoPaternoDelTutor || '',
       apellidoMaternoTutor: datos.ApellidoMaternoDelTutor || '',
@@ -181,7 +230,7 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
     };
 
     // Actualizar solo los campos que no sean nulos o vacíos
-    Object.keys(camposAMapear).forEach(key => {
+    Object.keys(camposAMapear).forEach((key) => {
       const valor = camposAMapear[key as keyof typeof camposAMapear];
       if (valor !== null && valor !== undefined && valor !== '') {
         this.formulario.patchValue({ [key]: valor });
@@ -194,6 +243,7 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
     const hablaLengua = this.formulario.get('hablaLengua')?.value;
     if (hablaLengua === '0') {
       this.toggleEnabled('lenguaSearch', false);
+      this.clearLenguaSelection();
     } else if (hablaLengua === '1') {
       this.toggleEnabled('lenguaSearch', true);
     }
@@ -359,8 +409,25 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
         formData.idLengua = '';
       }
 
-      console.log('Datos a enviar:', formData);
-      console.log('Tipo de ingreso:', this.tipoIngreso);
+      if (this.esEdicion && this.idAlumnoEditar) {
+        // Actualizar alumno existente
+        this.api.actualizarAlumno(this.idAlumnoEditar, formData).subscribe({
+          next: (response) => {
+            console.log('Alumno actualizado exitosamente:', response);
+            alert('Alumno actualizado exitosamente');
+            this.router.navigate(['/list']);
+          },
+          error: (error) => {
+            console.error('Error al actualizar alumno:', error);
+            alert('Error al actualizar el alumno');
+          },
+        });
+      } else {
+        // Crear nuevo alumno (lógica existente)
+        console.log('Datos a enviar:', formData);
+        console.log('Tipo de ingreso:', this.tipoIngreso);
+        // Aquí irías la lógica para crear un nuevo alumno
+      }
     }
   }
 }

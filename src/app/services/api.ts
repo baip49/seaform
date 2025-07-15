@@ -20,6 +20,11 @@ export class ApiService {
     return this.http.get<any[]>(`${this.baseUrl}/lenguas/${term}`);
   }
 
+  // Obtener lengua por id
+  getLengua(id_lengua: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/lenguas/id/${id_lengua}`);
+  }
+
   // Obtener tipos de sangre
   getSangre(): Observable<Sangre[]> {
     return this.http.get<Sangre[]>(`${this.baseUrl}/sangre`);
@@ -33,6 +38,14 @@ export class ApiService {
   // Obtener alumno
   getAlumno(matricula: string): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/alumnos/${matricula}`);
+  }
+
+  // Actualizar alumno
+  actualizarAlumno(idAlumno: number, datos: any): Observable<any> {
+    return this.http.put<any>(
+      `${this.baseUrl}/alumnos/actualizar/${idAlumno}`,
+      datos
+    );
   }
 
   // SEA
