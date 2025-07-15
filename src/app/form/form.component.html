@@ -1,23 +1,22 @@
 <div class="bg-gray-100 min-h-screen">
   <!-- Header -->
   <div class="bg-[#dbe9f4] text-center p-6">
-    <div class="flex">
-      <div class="flex-6 p-3">
-        <h1 class="text-5xl font-[700]">SOLICITUD DE PRE-INSCRIPCIÓN</h1>
-      </div>
-      <div class="flex-1 invisible"></div>
-    </div>
     <div class="flex flex-row items-stretch">
-      <div class="bg-slate-800 px-6 py-12 flex items-center">
-        <p class="text-white text-left text-2xl font-light">
+      <div
+        class="bg-slate-800 px-6 py-12 flex flex-col flex-3 items-center justify-center"
+      >
+        <h1 class="text-5xl text-gray-200 font-[700]">
+          Sistema de Enseñanza Abierta (SEA)
+        </h1>
+        <p class="mt-3 pt-3 border-t-1 text-white text-left text-2xl font-ligh">
           El presente formulario tiene la finalidad de codificar tus datos, los
-          cuáles están resguardados y nos permite iniciar tu expediente para los
+          cuales están resguardados y nos permite iniciar tu expediente para los
           procesos administrativos de tu ingreso al Sistema de Educación Abierta
         </p>
       </div>
       <div class="bg-sky-600 p-3 ps-6 w-64 flex items-center justify-center">
         <img
-          src="cobach-logo.png"
+          src="assets/cobach-logo.png"
           alt="Colegio de Bachilleres de Chiapas"
           class="mix-blend-multiply"
         />
@@ -25,127 +24,879 @@
     </div>
   </div>
   <div class="max-w-5xl mx-auto p-8 mt-4">
+    <!-- Formulario -->
     <form
       [formGroup]="formulario"
       (ngSubmit)="submit()"
       class="bg-white rounded-lg shadow-lg overflow-hidden"
     >
-      <!-- Datos Escolares -->
       <div class="bg-slate-800 py-6 px-6 flex items-center">
         <div class="w-1 h-8 bg-blue-400 mr-4"></div>
         <span class="text-white text-2xl">Datos escolares</span>
       </div>
+      <!-- Datos Escolares -->
       <div class="p-6 space-y-6">
-        <!-- Primera vez -->
-        <div class="bg-slate-100 rounded-lg p-3">
-          <label for="primeraVez" class="block px-1 mb-3 text-lg"
-            >¿Es la primera vez que te inscribes a un bachillerato?</label
-          >
-          <div class="space-y-3">
-            <label class="flex items-center">
-              <input
-                (click)="primeraVez('si')"
-                type="radio"
-                name="primeraVez"
-                id="primeraVez"
-                value="si"
-                class="mr-3 peer/primeraVez hidden"
-              />
-              <span
-                class="bg-gray-300/50 px-3 py-2 rounded-xl peer-checked/primeraVez:bg-indigo-600 peer-checked/primeraVez:text-white transition hover:cursor-pointer"
-                >Sí, es mi primera vez estudiando un bachillerato</span
-              >
-            </label>
-            <label class="flex items-center">
-              <input
-                (click)="primeraVez('no-cobach')"
-                type="radio"
-                name="primeraVez"
-                id="primeraVez-no-cobach"
-                value="no-cobach"
-                class="mr-3 peer/primeraVez hidden"
-              />
-              <span
-                class="bg-gray-300/50 px-3 py-2 rounded-xl peer-checked/primeraVez:bg-indigo-600 peer-checked/primeraVez:text-white transition hover:cursor-pointer"
-                >No, he estudiado antes en COBACH</span
-              ></label
+        <div class="flex flex-col md:flex-row gap-4">
+          <!-- Matricula -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="matricula" class="block px-1 mb-3 text-lg"
+              >Matrícula (no se puede editar)</label
             >
-            <label class="flex items-center">
-              <input
-                (click)="primeraVez('no-otra')"
-                type="radio"
-                name="primeraVez"
-                id="primeraVez-no-otra"
-                value="no-otra"
-                class="mr-3 peer/primeraVez hidden"
-              />
-              <span
-                class="bg-gray-300/50 px-3 py-2 rounded-xl peer-checked/primeraVez:bg-indigo-600 peer-checked/primeraVez:text-white transition hover:cursor-pointer"
-                >No, vengo de una escuela diferente a COBACH</span
-              >
-            </label>
+            <input
+              type="text"
+              formControlName="matricula"
+              id="matricula"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="Matrícula COBACH"
+              readonly
+            />
+          </div>
+          <!-- Sede -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="idSede" class="block px-1 mb-3 text-lg"
+              >Selecciona la sede a la que te inscribes</label
+            >
+            <select
+              formControlName="idSede"
+              id="idSede"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              required
+            >
+              <option value="1">Sede 02 | Tuxtla Gutiérrez</option>
+              <option value="2">Sede 05 | Venustiano Carranza</option>
+              <option value="3">Sede 06 | Comitán</option>
+              <option value="4">Sede 07 | Ocosingo</option>
+            </select>
           </div>
         </div>
-        <!-- Matricula -->
-        @if (formulario.get('matricula')?.disabled === false) {
-        <div class="bg-slate-100 rounded-lg p-3">
-          <label for="matricula" class="block px-1 mb-3 text-lg"
-            >Ingrese su matrícula</label
-          >
-          <input
-            type="text"
-            formControlName="matricula"
-            id="matricula"
-            class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50"
-            placeholder="Número de matrícula"
-          />
-          <div class="px-1 text-gray-600">Máximo 15 caracteres</div>
-        </div>
-        }
-        <!-- Sede -->
-        <div class="bg-slate-100 rounded-lg p-3">
-          <label for="sede" class="block px-1 mb-3 text-lg"
-            >Seleccione la sede</label
-          >
-          <select
-            formControlName="idSede"
-            id="idSede"
-            class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50"
-            required
-          >
-            <option value="1">Sede 02 | Tuxtla Gutiérrez</option>
-            <option value="2">Sede 05 | Venustiano Carranza</option>
-            <option value="3">Sede 06 | Comitán</option>
-            <option value="4">Sede 07 | Ocosingo</option>
-          </select>
-        </div>
       </div>
-      <!-- Datos personales -->
       <div class="bg-slate-800 py-6 px-6 flex items-center">
         <div class="w-1 h-8 bg-blue-400 mr-4"></div>
-        <span class="text-white text-2xl">Datos escolares</span>
+        <span class="text-white text-2xl">Datos personales</span>
+      </div>
+      <!-- Datos personales -->
+      <div class="p-6 space-y-6">
+        <!-- Primera fila -->
+        <div class="flex flex-col md:flex-row gap-4">
+          <!-- Nombre -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="nombre" class="block px-1 mb-3 text-lg">Nombre</label>
+            <input
+              type="text"
+              formControlName="nombre"
+              id="nombre"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="César Enrique"
+              required
+            />
+            <div class="px-1 text-gray-600">Nombre/s</div>
+          </div>
+          <!-- Apellido Paterno -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="apellidoPaterno" class="block px-1 mb-3 text-lg"
+              >Apellido Paterno</label
+            >
+            <input
+              type="text"
+              formControlName="apellidoPaterno"
+              id="apellidoPaterno"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="Sánchez"
+              required
+            />
+            <div class="px-1 text-gray-600">Apellido Paterno</div>
+          </div>
+          <!-- Apellido Materno -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="apellidoMaterno" class="block px-1 mb-3 text-lg"
+              >Apellido Materno</label
+            >
+            <input
+              type="text"
+              formControlName="apellidoMaterno"
+              id="apellidoMaterno"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="Montoya"
+              required
+            />
+            <div class="px-1 text-gray-600">Apellido Materno</div>
+          </div>
+        </div>
+        <!-- Segunda fila -->
+        <div class="flex flex-col md:flex-row gap-4">
+          <!-- CURP -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="curp" class="block px-1 mb-3 text-lg">CURP</label>
+            <input
+              type="text"
+              formControlName="curp"
+              id="curp"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="SANC890101HCHNSS00"
+              required
+            />
+          </div>
+          <!-- FechaNacimiento -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="fechaNacimiento" class="block px-1 mb-3 text-lg"
+              >Fecha de nacimiento
+            </label>
+            <input
+              type="date"
+              formControlName="fechaNacimiento"
+              id="fechaNacimiento"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              required
+            />
+          </div>
+          <!-- Sexo -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="sexoHombre" class="block px-1 mb-3 text-lg">Sexo</label>
+            <div class="flex space-x-3 g-3">
+              <label class="flex items-center md:flex-1">
+                <input
+                  formControlName="sexo"
+                  type="radio"
+                  name="sexo"
+                  id="sexoHombre"
+                  value="H"
+                  class="peer/sexo hidden"
+                  required
+                />
+                <span
+                  class="bg-blue-300/65 px-3 py-3 rounded-xl flex md:w-full md:justify-center items-center text-lg peer-checked/sexo:bg-blue-600 peer-checked/sexo:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-blue-800 hover:shadow-lg"
+                  >Hombre
+                </span>
+              </label>
+              <label class="flex items-center md:flex-1">
+                <input
+                  formControlName="sexo"
+                  type="radio"
+                  name="sexo"
+                  id="sexoMujer"
+                  value="M"
+                  class="peer/sexo hidden"
+                  required
+                />
+                <span
+                  class="bg-pink-300/65 px-3 py-3 rounded-xl flex items-center md:w-full md:justify-center text-lg peer-checked/sexo:bg-pink-600 peer-checked/sexo:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-pink-800 hover:shadow-lg"
+                  >Mujer
+                </span>
+              </label>
+            </div>
+          </div>
+          <!-- Telefono -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="telefono" class="block px-1 mb-3 text-lg"
+              >Teléfono personal
+            </label>
+            <input
+              type="tel"
+              formControlName="telefono"
+              id="telefono"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="9611234567"
+              required
+            />
+          </div>
+        </div>
+        <!-- Tercera fila -->
+        <div class="flex flex-col md:flex-row gap-4">
+          <!-- Correo -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="correo" class="block px-1 mb-3 text-lg"
+              >Correo electrónico</label
+            >
+            <input
+              type="email"
+              formControlName="correo"
+              id="correo"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="cesar@cobach.mx"
+              required
+            />
+            <div class="px-1 text-gray-600">Correo electrónico personal</div>
+          </div>
+          <!-- Estado Civil -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="estadoCivil" class="block px-1 mb-3 text-lg"
+              >Estado civil</label
+            >
+            <select
+              formControlName="estadoCivil"
+              id="estadoCivil"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              required
+            >
+              <option value="S">Soltero</option>
+              <option value="C">Casado</option>
+              <option value="D">Divorciado</option>
+            </select>
+            <div class="px-1 text-gray-600">Correo electrónico personal</div>
+          </div>
+          <!-- Nacionalidad -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="idNacionalidad" class="block px-1 mb-3 text-lg"
+              >Nacionalidad</label
+            >
+            <select
+              formControlName="idNacionalidad"
+              id="idNacionalidad"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              required
+            >
+              <option value="1">Mexicana</option>
+              <option value="2">Extranjera</option>
+            </select>
+          </div>
+        </div>
+        <!-- Cuarta fila -->
+        <div class="flex flex-col md:flex-row gap-4">
+          <!-- HablaLengua -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="lenguaSi" class="block px-1 mb-3 text-lg"
+              >¿Hablas alguna lengua indígena?</label
+            >
+            <div class="flex space-x-3">
+              <label class="flex items-center">
+                <input
+                  (click)="toggleEnabled('lenguaSearch', true)"
+                  formControlName="hablaLengua"
+                  type="radio"
+                  name="hablaLengua"
+                  id="lenguaSi"
+                  value="1"
+                  class="peer/lengua hidden"
+                  required
+                />
+                <span
+                  class="bg-green-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/lengua:bg-green-600 peer-checked/lengua:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-green-800 hover:shadow-lg"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6 mr-1"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m4.5 12.75 6 6 9-13.5"
+                    />
+                  </svg>
+                  Sí</span
+                >
+              </label>
+              <label class="flex items-center">
+                <input
+                  (click)="
+                    toggleEnabled('lenguaSearch', false); clearLenguaSelection()
+                  "
+                  formControlName="hablaLengua"
+                  type="radio"
+                  name="hablaLengua"
+                  id="lenguaNo"
+                  value="0"
+                  class="peer/lengua hidden"
+                  required
+                />
+                <span
+                  class="bg-red-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/lengua:bg-red-600/60 peer-checked/lengua:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6 mr-1"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M6 18 18 6M6 6l12 12"
+                    />
+                  </svg>
+                  No</span
+                >
+              </label>
+            </div>
+          </div>
+          <!-- IdLengua -->
+          @if (formulario.get('hablaLengua')?.value === '1') {
+          <div
+            class="w-full flex flex-col bg-slate-100 rounded-lg p-3 relative"
+          >
+            <!-- Contenedor para mostrar la lengua seleccionada o el searchbar -->
+            @if (hasLenguaSelected()) {
+            <!-- Mostrar lengua seleccionada -->
+            <div
+              class="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md bg-green-50 border-green-500 flex items-center justify-between"
+            >
+              <div class="flex items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-5 mr-2 text-green-600"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m4.5 12.75 6 6 9-13.5"
+                  />
+                </svg>
+                <span class="text-green-800 font-medium">{{
+                  lenguaSeleccionada.Nombre
+                }}</span>
+              </div>
+              <button
+                type="button"
+                (click)="clearLenguaSelection()"
+                class="bg-red-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/lengua:bg-red-600/60 peer-checked/lengua:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg"
+                title="Cambiar selección"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18 18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            } @else {
+            <!-- Searchbar dinámico -->
+            <label for="lenguaSearch" class="block px-1 mb-3 text-lg"
+              >¿Cuál?</label
+            >
+            <input
+              type="text"
+              formControlName="lenguaSearch"
+              id="lenguaSearch"
+              (input)="onSearchLengua($event)"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="Buscar lengua indígena..."
+              autocomplete="off"
+              required
+            />
+
+            <!-- Indicador de búsqueda -->
+            @if (buscandoLengua) {
+            <div class="absolute right-3 top-16 mt-1">
+              <div
+                class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"
+              ></div>
+            </div>
+            }
+
+            <!-- Lista de resultados -->
+            @if (lenguasFiltradas.length > 0) {
+            <div
+              class="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto z-10 mt-1"
+            >
+              @for (lengua of lenguasFiltradas; track $index) {
+              <div
+                class="px-4 py-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0"
+                (click)="selectLengua(lengua)"
+              >
+                <div class="font-medium">{{ lengua.Nombre }}</div>
+                @if (lengua.descripcion) {
+                <div class="text-sm text-gray-600">
+                  {{ lengua.descripcion }}
+                </div>
+                }
+              </div>
+              }
+            </div>
+            }
+
+            <!-- Mensaje cuando no hay resultados -->
+            @if (lenguasFiltradas.length === 0 &&
+            formulario.get('lenguaSearch')?.value &&
+            formulario.get('lenguaSearch')?.value.length >= 2 &&
+            !buscandoLengua) {
+            <div
+              class="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-md shadow-lg p-4 text-gray-500 text-center z-10 mt-1"
+            >
+              No se encontraron lenguas que coincidan con tu búsqueda
+            </div>
+            } }
+
+            <!-- Campo oculto para el ID de la lengua seleccionada -->
+            <input type="hidden" formControlName="idLengua" />
+          </div>
+          }
+        </div>
+        <!-- Quinta fila -->
+        <div class="flex flex-col md:flex-row gap-4">
+          <!-- TieneBeca -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="becaSi" class="block px-1 mb-3 text-lg"
+              >¿Tienes alguna beca activa?</label
+            >
+            <div class="flex space-x-3">
+              <label class="flex items-center">
+                <input
+                  (click)="toggleEnabled('queBeca', true)"
+                  formControlName="tieneBeca"
+                  type="radio"
+                  name="tieneBeca"
+                  id="becaSi"
+                  value="1"
+                  class="peer/beca hidden"
+                  required
+                />
+                <span
+                  class="bg-green-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/beca:bg-green-600 peer-checked/beca:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-green-800 hover:shadow-lg"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6 mr-1"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m4.5 12.75 6 6 9-13.5"
+                    />
+                  </svg>
+                  Sí</span
+                >
+              </label>
+              <label class="flex items-center">
+                <input
+                  (click)="toggleEnabled('queBeca', false)"
+                  formControlName="tieneBeca"
+                  type="radio"
+                  name="tieneBeca"
+                  id="becaNo"
+                  value="0"
+                  class="peer/beca hidden"
+                  required
+                />
+                <span
+                  class="bg-red-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/beca:bg-red-600/60 peer-checked/beca:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6 mr-1"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M6 18 18 6M6 6l12 12"
+                    />
+                  </svg>
+                  No</span
+                >
+              </label>
+            </div>
+          </div>
+          <!-- QueBeca -->
+          @if (formulario.get('tieneBeca')?.value === '1') {
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="queBeca" class="block px-1 mb-3 text-lg"
+              >Ingresa el nombre de la beca que tienes activa</label
+            >
+            <input
+              type="text"
+              formControlName="queBeca"
+              id="queBeca"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="Benito Juárez"
+              required
+            />
+          </div>
+          }
+        </div>
+      </div>
+      <!-- Datos tutor -->
+      @if (menorEdad()){
+      <div class="bg-slate-800 py-6 px-6 flex items-center">
+        <div class="w-1 h-8 bg-blue-400 mr-4"></div>
+        <span class="text-white text-2xl">Datos del tutor</span>
       </div>
       <div class="p-6 space-y-6">
-        <!-- Nombre -->
-        <div class="bg-slate-100 rounded-lg p-3">
-          <label for="matricula" class="block px-1 mb-3 text-lg"
-            >Nombre</label
-          >
+        <!-- Nombre completo del tutor -->
+        <div class="flex flex-col md:flex-row gap-4">
+          <!-- NombreTutor -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="nombreTutor" class="block px-1 mb-3 text-lg"
+              >Nombre</label
+            >
+            <input
+              type="text"
+              formControlName="nombreTutor"
+              id="nombreTutor"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="Lucila"
+              required
+            />
+            <div class="px-1 text-gray-600">Nombre/s</div>
+          </div>
+          <!-- ApellidoPaternoTutor -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="apellidoPaternoTutor" class="block px-1 mb-3 text-lg"
+              >Apellido Paterno</label
+            >
+            <input
+              type="text"
+              formControlName="apellidoPaternoTutor"
+              id="apellidoPaternoTutor"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="Montoya"
+              required
+            />
+            <div class="px-1 text-gray-600">Apellido Paterno</div>
+          </div>
+          <!-- ApellidoMaternoTutor -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="apellidoMaternoTutor" class="block px-1 mb-3 text-lg"
+              >Apellido Materno</label
+            >
+            <input
+              type="text"
+              formControlName="apellidoMaternoTutor"
+              id="apellidoMaternoTutor"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="Ramos"
+              required
+            />
+            <div class="px-1 text-gray-600">Apellido Materno</div>
+          </div>
+        </div>
+        <!-- TelefonoTutor -->
+        <div class="flex-col bg-slate-100 rounded-lg p-3">
+          <label for="telefonoTutor" class="block px-1 mb-3 text-lg"
+            >Teléfono personal del tutor
+          </label>
           <input
-            type="text"
-            formControlName="nombre"
-            id="nombre"
-            class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50"
-            placeholder="César Sánchez"
+            type="tel"
+            formControlName="telefonoTutor"
+            id="telefonoTutor"
+            class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+            placeholder="9611234567"
+            required
           />
-          <div class="px-1 text-gray-600">Nombre/s</div>
+        </div>
+      </div>
+      }
+      <div class="bg-slate-800 py-6 px-6 flex items-center">
+        <div class="w-1 h-8 bg-blue-400 mr-4"></div>
+        <span class="text-white text-2xl">Dirección</span>
+      </div>
+      <!-- Dirección -->
+      <div class="p-6 space-y-6">
+        <div class="flex flex-col md:flex-row gap-4">
+          <!-- Calle -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="calle" class="block px-1 mb-3 text-lg">Calle </label>
+            <input
+              type="text"
+              formControlName="calle"
+              id="calle"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="Avenida central"
+              required
+            />
+          </div>
+          <!-- Entre calles -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="entreCalles" class="block px-1 mb-3 text-lg"
+              >Entre calles
+            </label>
+            <input
+              type="text"
+              formControlName="entreCalles"
+              id="entreCalles"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="Avenida 5 de mayo y Avenida 6 de junio"
+            />
+          </div>
+        </div>
+        <div class="flex flex-col md:flex-row gap-4">
+          <!-- Código postal -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="codigoPostal" class="block px-1 mb-3 text-lg"
+              >Código postal
+            </label>
+            <input
+              type="text"
+              formControlName="codigoPostal"
+              id="codigoPostal"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="29230"
+              required
+            />
+          </div>
+          <!-- Número exterior -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="numeroExterior" class="block px-1 mb-3 text-lg"
+              >Número exterior
+            </label>
+            <input
+              type="text"
+              formControlName="numeroExterior"
+              id="numeroExterior"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="123"
+              required
+            />
+          </div>
+          <!-- Número interior -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="numeroInterior" class="block px-1 mb-3 text-lg"
+              >Número interior
+            </label>
+            <input
+              type="text"
+              formControlName="numeroInterior"
+              id="numeroInterior"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="5"
+            />
+          </div>
+          <!-- Localidad -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="idLocalidad" class="block px-1 mb-3 text-lg"
+              >Localidad/Barrio/Colonia
+            </label>
+            <input
+              type="text"
+              formControlName="idLocalidad"
+              id="idLocalidad"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="La salle"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="bg-slate-800 py-6 px-6 flex items-center">
+        <div class="w-1 h-8 bg-blue-400 mr-4"></div>
+        <span class="text-white text-2xl">Datos médicos</span>
+      </div>
+      <!-- Datos médicos -->
+      <div class="p-6 space-y-6">
+        <!-- Alergias -->
+        <div class="flex flex-col md:flex-row gap-4">
+          <!-- TieneAlergias -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="alergiaSi" class="block px-1 mb-3 text-lg"
+              >¿Tienes alguna alergia?
+            </label>
+            <div class="flex space-x-3">
+              <label class="flex items-center">
+                <input
+                  (click)="toggleEnabled('alergias', true)"
+                  formControlName="tieneAlergias"
+                  type="radio"
+                  name="tieneAlergias"
+                  id="alergiaSi"
+                  value="1"
+                  class="peer/alergia hidden"
+                  required
+                />
+                <span
+                  class="bg-green-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/alergia:bg-green-600 peer-checked/alergia:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-green-800 hover:shadow-lg"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6 mr-1"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m4.5 12.75 6 6 9-13.5"
+                    />
+                  </svg>
+                  Sí</span
+                >
+              </label>
+              <label class="flex items-center">
+                <input
+                  (click)="toggleEnabled('alergias', false)"
+                  formControlName="tieneAlergias"
+                  type="radio"
+                  name="tieneAlergias"
+                  id="alergiaNo"
+                  value="0"
+                  class="peer/alergia hidden"
+                  required
+                />
+                <span
+                  class="bg-red-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/alergia:bg-red-600/60 peer-checked/alergia:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6 mr-1"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M6 18 18 6M6 6l12 12"
+                    />
+                  </svg>
+                  No</span
+                >
+              </label>
+            </div>
+          </div>
+          <!-- Alergias -->
+          @if (formulario.get('tieneAlergias')?.value === '1') {
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="alergias" class="block px-1 mb-3 text-lg"
+              >Ingresa las alergias que tengas</label
+            >
+            <input
+              type="text"
+              formControlName="alergias"
+              id="alergias"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="Sulfas, Polvo, etc."
+              required
+            />
+          </div>
+          }
+        </div>
+        <!-- Discapacidad -->
+        <div class="flex flex-col md:flex-row gap-4">
+          <!-- TieneDiscapacidad -->
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="discapacidadSi" class="block px-1 mb-3 text-lg"
+              >¿Tienes alguna discapacidad?
+            </label>
+            <div class="flex space-x-3">
+              <label class="flex items-center">
+                <input
+                  (click)="toggleEnabled('discapacidad', true)"
+                  formControlName="tieneDiscapacidad"
+                  type="radio"
+                  name="tieneDiscapacidad"
+                  id="discapacidadSi"
+                  value="1"
+                  class="peer/discapacidad hidden"
+                  required
+                />
+                <span
+                  class="bg-green-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/discapacidad:bg-green-600 peer-checked/discapacidad:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-green-800 hover:shadow-lg"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6 mr-1"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m4.5 12.75 6 6 9-13.5"
+                    />
+                  </svg>
+                  Sí</span
+                >
+              </label>
+              <label class="flex items-center">
+                <input
+                  (click)="toggleEnabled('discapacidad', false)"
+                  formControlName="tieneDiscapacidad"
+                  type="radio"
+                  name="tieneDiscapacidad"
+                  id="discapacidadNo"
+                  value="0"
+                  class="peer/discapacidad hidden"
+                  required
+                />
+                <span
+                  class="bg-red-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/discapacidad:bg-red-600/60 peer-checked/discapacidad:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6 mr-1"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M6 18 18 6M6 6l12 12"
+                    />
+                  </svg>
+                  No</span
+                >
+              </label>
+            </div>
+          </div>
+          <!-- Discapacidad -->
+          @if (formulario.get('tieneDiscapacidad')?.value === '1') {
+          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+            <label for="discapacidad" class="block px-1 mb-3 text-lg"
+              >Ingresa la discapacidad</label
+            >
+            <input
+              type="text"
+              formControlName="discapacidad"
+              id="discapacidad"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              placeholder="Motriz, Auditiva, Visual, etc."
+              required
+            />
+          </div>
+          }
+        </div>
+        <!-- TipoSangre -->
+        <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+          <label for="tipoSangre1" class="block px-1 mb-3 text-lg"
+            >Selecciona tu tipo de sangre
+          </label>
+          <div class="flex flex-wrap gap-3">
+            <ng-container *ngFor="let tipoSangre of sangre; let i = index">
+              <label class="flex items-center">
+                <input
+                  formControlName="tipoSangre"
+                  type="radio"
+                  name="tipoSangre"
+                  [id]="'tipoSangre' + tipoSangre.Id"
+                  [value]="tipoSangre.Descripcion"
+                  class="peer/tipoSangre hidden"
+                />
+                <span
+                  class="bg-blue-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/tipoSangre:bg-sky-600 peer-checked/tipoSangre:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-sky-800 hover:shadow-lg cursor-pointer"
+                >
+                  {{ tipoSangre.Descripcion }}
+                </span>
+              </label>
+            </ng-container>
+          </div>
         </div>
       </div>
       <!-- Botón de envío -->
       <div class="p-6 text-center bg-gray-50">
         <button
           type="submit"
-          class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-200 shadow-lg hover:shadow-xl"
+          class="bg-blue-400 px-3 py-2 rounded-xl text-xl focus:bg-blue-700 focus:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-blue-950 hover:shadow-lg"
         >
           Enviar formulario
         </button>
