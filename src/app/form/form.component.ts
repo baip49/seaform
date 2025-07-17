@@ -22,14 +22,24 @@ import { ApiService } from '../services/api';
   templateUrl: './form.component.html',
   styleUrl: './form.component.css',
 })
-export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
+export class FormComponent implements OnInit, AfterViewInit {
   title = 'SEA - COBACH';
   formulario: FormGroup;
+
+  // Lenguas
   lenguas: any[] = [];
   lenguasFiltradas: any[] = [];
   terminoLengua = new Subject<string>();
   buscandoLengua = false;
   lenguaSeleccionada: any = null;
+
+  // Localidades
+  localidades: any[] = [];
+  localidadesFiltradas: any[] = [];
+  terminoLocalidad = new Subject<string>();
+  buscandoLocalidad = false;
+  localidadSeleccionada: any = null;
+
   sangre: any[] = [];
   esEdicion = false;
   idAlumnoEditar: number | null = null;
@@ -37,6 +47,8 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
   // Datos recibidos del componente anterior
   datosAlumno: any = null;
   tipoIngreso: string = '';
+
+  cargando = false; // Agregar esta propiedad
 
   constructor(
     private fb: FormBuilder,
@@ -46,7 +58,7 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.formulario = this.fb.group({
       id: [null],
       curp: [''],
-      matricula: [{ value: '', disabled: true }],
+      matricula: [{ value: '' }],
       nombre: [''],
       apellidoPaterno: [''],
       apellidoMaterno: [''],
@@ -82,6 +94,7 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
       numeroExterior: [''],
       numeroInterior: [''],
       idLocalidad: [''],
+      localidadSearch: [''],
     });
 
     // Obtener datos del estado de navegación
@@ -126,6 +139,26 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
         this.clearLenguaSelection();
       }
     });
+
+    this.terminoLocalidad
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        switchMap((term) => {
+          if (term.length >= 2) {
+            this.buscandoLocalidad = true;
+            return this.api
+              .searchLocalidades(term)
+              .pipe(catchError(() => of([])));
+          } else {
+            return of([]);
+          }
+        })
+      )
+      .subscribe((localidades) => {
+        this.localidadesFiltradas = localidades;
+        this.buscandoLocalidad = false;
+      });
 
     this.api.getSangre().subscribe({
       next: (sangre) => {
@@ -174,13 +207,13 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     };
 
-    const mapearBooleano = (valor: any): string => {
+    const mapearBooleano = (valor: any): number => {
       if (valor === true || valor === 1 || valor === '1') {
-        return '1';
+        return 1;
       } else if (valor === false || valor === 0 || valor === '0') {
-        return '0';
+        return 0;
       }
-      return '0';
+      return 0;
     };
 
     const camposAMapear = {
@@ -212,11 +245,19 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
         ? this.formatearFecha(datos.FechaCaptura)
         : '',
       idRol: datos.IdRol,
-      tieneAlergias: datos.Alergias && datos.Alergias !== 'Sin alergias' ? '1' : '0',
-      alergias: datos.Alergias && datos.Alergias !== 'Sin alergias' ? datos.Alergias : '',
-      tipoSangre: datos.TipoSangre || '',
-      tieneDiscapacidad: datos.Discapacidad && datos.Discapacidad !== 'Sin discapacidad' ? '1' : '0',
-      discapacidad: datos.Discapacidad && datos.Discapacidad !== 'Sin discapacidad' ? datos.Discapacidad : '',
+      tieneAlergias:
+        datos.Alergias && datos.Alergias !== 'Sin alergias' ? 1 : 0,
+      alergias:
+        datos.Alergias && datos.Alergias !== 'Sin alergias'
+          ? datos.Alergias
+          : '',
+      tipoSangre: datos.TipoSangre ? datos.TipoSangre.trim() : '',
+      tieneDiscapacidad:
+        datos.Discapacidad && datos.Discapacidad !== 'Sin discapacidad' ? 1 : 0,
+      discapacidad:
+        datos.Discapacidad && datos.Discapacidad !== 'Sin discapacidad'
+          ? datos.Discapacidad
+          : '',
       nombreTutor: datos.NombreDelTutor || '',
       apellidoPaternoTutor: datos.ApellidoPaternoDelTutor || '',
       apellidoMaternoTutor: datos.ApellidoMaternoDelTutor || '',
@@ -236,6 +277,30 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
         this.formulario.patchValue({ [key]: valor });
       }
     });
+
+    // Si hay datos de lengua, cargarlos
+    if (datos.IdLengua) {
+      this.lenguaSeleccionada = {
+        Id: datos.IdLengua,
+        Nombre: datos.NombreLengua || 'Lengua cargada',
+      };
+      this.formulario.patchValue({
+        idLengua: datos.IdLengua,
+        lenguaSearch: datos.NombreLengua || '',
+      });
+    }
+
+    // Si hay datos de localidad, se cargan
+    if (datos.IdLocalidad) {
+      this.localidadSeleccionada = {
+        Id: datos.IdLocalidad,
+        Nombre: datos.Localidad || 'Localidad cargada',
+      };
+      this.formulario.patchValue({
+        idLocalidad: datos.IdLocalidad,
+        localidadSearch: datos.Localidad || '',
+      });
+    }
   }
 
   private configurarControlesCondicionales() {
@@ -322,11 +387,6 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  ngOnDestroy() {
-    this.terminoLengua.unsubscribe();
-    this.terminoLengua.complete();
-  }
-
   onSearchLengua(event: Event) {
     const input = event.target as HTMLInputElement;
     const term = input.value.trim();
@@ -361,6 +421,45 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
 
   hasLenguaSelected(): boolean {
     return this.lenguaSeleccionada !== null;
+  }
+
+  onSearchLocalidad(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const term = input.value.trim();
+
+    if (
+      this.localidadSeleccionada &&
+      term !== this.localidadSeleccionada.Nombre
+    ) {
+      this.localidadSeleccionada = null;
+      this.formulario.patchValue({
+        idLocalidad: '',
+      });
+    }
+
+    this.terminoLocalidad.next(term);
+  }
+
+  selectLocalidad(localidad: any) {
+    this.localidadSeleccionada = localidad;
+    this.formulario.patchValue({
+      idLocalidad: localidad.Id,
+      localidadSearch: localidad.NombreLocalidad || localidad.Nombre,
+    });
+    this.localidadesFiltradas = [];
+  }
+
+  clearLocalidadSelection() {
+    this.localidadSeleccionada = null;
+    this.formulario.patchValue({
+      idLocalidad: '',
+      localidadSearch: '',
+    });
+    this.localidadesFiltradas = [];
+  }
+
+  hasLocalidadSelected(): boolean {
+    return this.localidadSeleccionada !== null;
   }
 
   toggleEnabled(name: string, value: boolean) {
@@ -402,31 +501,70 @@ export class FormComponent implements OnInit, OnDestroy, AfterViewInit {
 
   submit() {
     if (this.formulario.valid) {
-      const formData = { ...this.formulario.value };
+      // Usar getRawValue() para incluir campos deshabilitados
+      const formData = { ...this.formulario.getRawValue() };
       delete formData.lenguaSearch;
+      delete formData.localidadSearch;
 
       if (formData.hablaLengua === '0') {
         formData.idLengua = '';
       }
 
+      // Convertir idLengua a entero o null
+      if (formData.idLengua && formData.idLengua !== '') {
+        formData.idLengua = parseInt(formData.idLengua, 10);
+      } else {
+        formData.idLengua = null;
+      }
+
+      // Convertir otros campos numéricos también
+      formData.idSede = parseInt(formData.idSede, 10);
+      formData.idNacionalidad = parseInt(formData.idNacionalidad, 10);
+
       if (this.esEdicion && this.idAlumnoEditar) {
-        // Actualizar alumno existente
-        this.api.actualizarAlumno(this.idAlumnoEditar, formData).subscribe({
+        this.cargando = true;
+        formData.id = this.idAlumnoEditar;
+
+        // Agregar logging para depurar
+        console.log('Datos que se envían a la API:', formData);
+
+        this.api.actualizarAlumno(formData).subscribe({
           next: (response) => {
             console.log('Alumno actualizado exitosamente:', response);
-            alert('Alumno actualizado exitosamente');
+            alert('Los datos del alumno han sido actualizados correctamente');
             this.router.navigate(['/list']);
           },
           error: (error) => {
-            console.error('Error al actualizar alumno:', error);
-            alert('Error al actualizar el alumno');
+            console.error('Error completo:', error);
+
+            // Extraer detalles del error de validación
+            if (error.status === 422 && error.error && error.error.detail) {
+              console.error('Errores de validación:', error.error.detail);
+
+              // Mostrar errores específicos
+              const errores = error.error.detail
+                .map((err: any) => {
+                  return `${err.loc ? err.loc.join(' -> ') : 'Campo'}: ${
+                    err.msg
+                  }`;
+                })
+                .join('\n');
+
+              alert(`Errores de validación:\n${errores}`);
+            } else {
+              alert(
+                'Error al actualizar los datos del alumno. Intente nuevamente.'
+              );
+            }
+          },
+          complete: () => {
+            this.cargando = false;
           },
         });
       } else {
         // Crear nuevo alumno (lógica existente)
         console.log('Datos a enviar:', formData);
         console.log('Tipo de ingreso:', this.tipoIngreso);
-        // Aquí irías la lógica para crear un nuevo alumno
       }
     }
   }

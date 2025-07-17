@@ -48,7 +48,7 @@
               type="text"
               formControlName="matricula"
               id="matricula"
-              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 read-only:opacity-50 transition"
               placeholder="Matrícula COBACH"
               readonly
             />
@@ -64,10 +64,10 @@
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               required
             >
-              <option value="1">Sede 02 | Tuxtla Gutiérrez</option>
-              <option value="2">Sede 05 | Venustiano Carranza</option>
-              <option value="3">Sede 06 | Comitán</option>
-              <option value="4">Sede 07 | Ocosingo</option>
+              <option [value]="1">Sede 02 | Tuxtla Gutiérrez</option>
+              <option [value]="2">Sede 05 | Venustiano Carranza</option>
+              <option [value]="3">Sede 06 | Comitán</option>
+              <option [value]="4">Sede 07 | Ocosingo</option>
             </select>
           </div>
         </div>
@@ -247,8 +247,8 @@
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               required
             >
-              <option value="1">Mexicana</option>
-              <option value="2">Extranjera</option>
+              <option [value]="1">Mexicana</option>
+              <option [value]="2">Extranjera</option>
             </select>
           </div>
         </div>
@@ -267,7 +267,7 @@
                   type="radio"
                   name="hablaLengua"
                   id="lenguaSi"
-                  value="1"
+                  [value]="1"
                   class="peer/lengua hidden"
                   required
                 />
@@ -299,7 +299,7 @@
                   type="radio"
                   name="hablaLengua"
                   id="lenguaNo"
-                  value="0"
+                  [value]="0"
                   class="peer/lengua hidden"
                   required
                 />
@@ -325,7 +325,7 @@
             </div>
           </div>
           <!-- IdLengua -->
-          @if (formulario.get('hablaLengua')?.value === '1') {
+          @if (formulario.get('hablaLengua')?.value === 1) {
           <div
             class="w-full flex flex-col bg-slate-100 rounded-lg p-3 relative"
           >
@@ -391,6 +391,12 @@
               autocomplete="off"
               required
             />
+            <div class="px-1 text-gray-600">
+              @if (lenguaSeleccionada) { Lengua actual:
+              {{ lenguaSeleccionada.Nombre }} } @else if (datosAlumno?.IdLengua)
+              { Lengua actual: {{ datosAlumno.NombreLengua }}
+              } @else { Lengua actual: No especificada }
+            </div>
 
             <!-- Indicador de búsqueda -->
             @if (buscandoLengua) {
@@ -454,7 +460,7 @@
                   type="radio"
                   name="tieneBeca"
                   id="becaSi"
-                  value="1"
+                  [value]="1"
                   class="peer/beca hidden"
                   required
                 />
@@ -484,7 +490,7 @@
                   type="radio"
                   name="tieneBeca"
                   id="becaNo"
-                  value="0"
+                  [value]="0"
                   class="peer/beca hidden"
                   required
                 />
@@ -510,7 +516,7 @@
             </div>
           </div>
           <!-- QueBeca -->
-          @if (formulario.get('tieneBeca')?.value === '1') {
+          @if (formulario.get('tieneBeca')?.value === 1) {
           <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
             <label for="queBeca" class="block px-1 mb-3 text-lg"
               >Ingresa el nombre de la beca que tienes activa</label
@@ -674,17 +680,134 @@
             />
           </div>
           <!-- Localidad -->
-          <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
+          <div
+            class="w-full flex flex-col bg-slate-100 rounded-lg p-3 relative"
+          >
             <label for="idLocalidad" class="block px-1 mb-3 text-lg"
               >Localidad/Barrio/Colonia
             </label>
+
+            <!-- Contenedor para mostrar la localidad seleccionada o el searchbar -->
+            @if (hasLocalidadSelected()) {
+            <!-- Mostrar localidad seleccionada -->
+            <div
+              class="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md bg-green-50 border-green-500 flex items-center justify-between"
+            >
+              <div class="flex items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-5 mr-2 text-green-600"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m4.5 12.75 6 6 9-13.5"
+                  />
+                </svg>
+                <span class="text-green-800 font-medium">{{
+                  localidadSeleccionada.NombreLocalidad ||
+                    localidadSeleccionada.Nombre
+                }}</span>
+              </div>
+              <button
+                type="button"
+                (click)="clearLocalidadSelection()"
+                class="bg-red-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/localidad:bg-red-600/60 peer-checked/localidad:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg"
+                title="Cambiar selección"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18 18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            } @else {
+            <!-- Searchbar dinámico -->
             <input
               type="text"
-              formControlName="idLocalidad"
-              id="idLocalidad"
+              formControlName="localidadSearch"
+              id="localidadSearch"
+              (input)="onSearchLocalidad($event)"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
-              placeholder="La salle"
+              placeholder="Buscar localidad..."
+              autocomplete="off"
+              required
             />
+            <div class="px-1 text-gray-600">
+              @if (localidadSeleccionada) { Localidad actual:
+              {{
+                localidadSeleccionada.NombreLocalidad ||
+                  localidadSeleccionada.Nombre
+              }}
+              } @else if (datosAlumno?.IdLocalidad && datosAlumno?.Localidad) {
+              Localidad actual: {{ datosAlumno.Localidad }}
+              } @else { Localidad actual: No especificada }
+            </div>
+
+            <!-- Indicador de búsqueda -->
+            @if (buscandoLocalidad) {
+            <div class="absolute right-3 top-16 mt-1">
+              <div
+                class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"
+              ></div>
+            </div>
+            }
+
+            <!-- Lista de resultados -->
+            @if (localidadesFiltradas.length > 0) {
+            <div
+              class="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto z-10 mt-1"
+            >
+              @for (localidad of localidadesFiltradas; track $index) {
+              <div
+                class="px-4 py-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0"
+                (click)="selectLocalidad(localidad)"
+              >
+                <div class="font-medium">
+                  {{ localidad.NombreLocalidad || localidad.Nombre }}
+                </div>
+                @if (localidad.Municipio) {
+                <div class="text-sm text-gray-600">
+                  {{ localidad.Municipio }}
+                </div>
+                } @if (localidad.estado) {
+                <div class="text-sm text-gray-600">
+                  {{ localidad.estado }}
+                </div>
+                }
+              </div>
+              }
+            </div>
+            }
+
+            <!-- Mensaje cuando no hay resultados -->
+            @if (localidadesFiltradas.length === 0 &&
+            formulario.get('localidadSearch')?.value &&
+            formulario.get('localidadSearch')?.value.length >= 2 &&
+            !buscandoLocalidad) {
+            <div
+              class="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-md shadow-lg p-4 text-gray-500 text-center z-10 mt-1"
+            >
+              No se encontraron localidades que coincidan con tu búsqueda
+            </div>
+            } }
+
+            <!-- Campo oculto para el ID de la localidad seleccionada -->
+            <input type="hidden" formControlName="idLocalidad" />
           </div>
         </div>
       </div>
@@ -709,7 +832,7 @@
                   type="radio"
                   name="tieneAlergias"
                   id="alergiaSi"
-                  value="1"
+                  [value]="1"
                   class="peer/alergia hidden"
                   required
                 />
@@ -739,7 +862,7 @@
                   type="radio"
                   name="tieneAlergias"
                   id="alergiaNo"
-                  value="0"
+                  [value]="0"
                   class="peer/alergia hidden"
                   required
                 />
@@ -796,7 +919,7 @@
                   type="radio"
                   name="tieneDiscapacidad"
                   id="discapacidadSi"
-                  value="1"
+                  [value]="1"
                   class="peer/discapacidad hidden"
                   required
                 />
@@ -826,7 +949,7 @@
                   type="radio"
                   name="tieneDiscapacidad"
                   id="discapacidadNo"
-                  value="0"
+                  [value]="0"
                   class="peer/discapacidad hidden"
                   required
                 />
