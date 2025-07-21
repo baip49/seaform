@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ApiService } from '../services/api';
+import { ApiService } from '../services/api/api';
 
 @Component({
   selector: 'app-pantalla-inicial',
@@ -35,12 +35,18 @@ export class PantallaInicialComponent {
   toggleEnabled(name: string, value: boolean) {
     const control = this.pantallaInicial.get(name);
     if (control) {
-      if (value) {
-        control.enable();
-      } else {
-        control.disable();
-        control.setValue('');
-      }
+      // Usar setTimeout para diferir la actualización al siguiente ciclo
+      setTimeout(() => {
+        if (value) {
+          control.enable();
+          control.setValidators([Validators.required]);
+        } else {
+          control.disable();
+          control.setValue('');
+          control.clearValidators();
+        }
+        control.updateValueAndValidity();
+      }, 0);
     }
   }
 

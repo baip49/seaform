@@ -4,8 +4,16 @@ import { PantallaInicialComponent } from './pantalla-inicial/pantalla-inicial.co
 import { ListComponent } from './list/list.component';
 
 export const routes: Routes = [
-  { path: '', component: PantallaInicialComponent },
-  { path: 'form', component: FormComponent },
-  { path: 'list', component: ListComponent },
+  {
+    path: '',
+    component: PantallaInicialComponent,
+    data: { title: 'Pantalla Inicial' },
+  },
+  { path: 'form', component: FormComponent, data: { title: 'Formulario' } },
+  {
+    path: 'list',
+    component: ListComponent,
+    data: { title: 'Lista de Alumnos' },
+  },
   { path: '**', redirectTo: '' },
 ];

@@ -14,7 +14,8 @@ import {
   switchMap,
   catchError,
 } from 'rxjs/operators';
-import { ApiService } from '../services/api';
+import { ApiService } from '../services/api/api';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-form',
@@ -53,7 +54,8 @@ export class FormComponent implements OnInit, AfterViewInit {
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
-    private router: Router
+    private router: Router,
+    private titleService: Title
   ) {
     this.formulario = this.fb.group({
       id: [null],
@@ -101,8 +103,14 @@ export class FormComponent implements OnInit, AfterViewInit {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras?.state) {
       this.datosAlumno = navigation.extras.state['datosAlumno'];
-      this.tipoIngreso = navigation.extras.state['tipo'];
+      this.tipoIngreso = navigation.extras.state['tipoIngreso']; // Cambiar de 'tipo' a 'tipoIngreso'
       this.esEdicion = navigation.extras.state['esEdicion'] || false;
+
+      console.log('Datos recibidos en FormComponent:', {
+        datosAlumno: this.datosAlumno,
+        tipoIngreso: this.tipoIngreso,
+        esEdicion: this.esEdicion,
+      });
 
       if (this.esEdicion && this.datosAlumno) {
         this.idAlumnoEditar = this.datosAlumno.Id || this.datosAlumno.id;
@@ -229,8 +237,8 @@ export class FormComponent implements OnInit, AfterViewInit {
       sexo: datos.Sexo,
       telefono: datos.Telefono,
       correo: datos.Correo,
-      idSede: datos.IdSede, // Agregado el mapeo para sede
-      estadoCivil: mapearEstadoCivil(datos.EstadoCivil),
+      idSede: datos.IdSede,
+      estadoCivil: this.mapearEstadoCivil(datos.EstadoCivil),
       idNacionalidad: mapearNacionalidad(datos.Nacionalidad),
       hablaLengua: mapearBooleano(datos.HablaLengua),
       idLengua: datos.IdLengua,
@@ -300,6 +308,13 @@ export class FormComponent implements OnInit, AfterViewInit {
         idLocalidad: datos.IdLocalidad,
         localidadSearch: datos.Localidad || '',
       });
+    }
+
+    // Cambiar título con el nombre del alumno
+    if (datos.Nombre) {
+      this.titleService.setTitle(
+        `Editando: ${datos.Nombre} ${datos.ApellidoPaterno}`
+      );
     }
   }
 
@@ -497,6 +512,24 @@ export class FormComponent implements OnInit, AfterViewInit {
     }
 
     return edad <= 18;
+  }
+
+  private mapearEstadoCivil(estadoCivil: string | null): string {
+    if (!estadoCivil) {
+      return '';
+    }
+
+    const estadoLower = estadoCivil.toLowerCase();
+    const mapeo: { [key: string]: string } = {
+      'soltero': 'S',
+      'casado': 'C',
+      'divorciado': 'D',
+      's': 'S',
+      'c': 'C',
+      'd': 'D'
+    };
+
+    return mapeo[estadoLower] || estadoCivil;
   }
 
   submit() {
