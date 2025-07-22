@@ -49,7 +49,12 @@ export class FormComponent implements OnInit, AfterViewInit {
   datosAlumno: any = null;
   tipoIngreso: string = '';
 
-  cargando = false; // Agregar esta propiedad
+  cargando = false;
+
+  // Agregar propiedades para manejo de documentos
+  documentosRequeridos: string[] = [];
+  archivosCargados: { [key: string]: File | null } = {};
+  documentoSeleccionado: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -60,7 +65,7 @@ export class FormComponent implements OnInit, AfterViewInit {
     this.formulario = this.fb.group({
       id: [null],
       curp: [''],
-      matricula: [{ value: '' }],
+      matricula: [''],
       nombre: [''],
       apellidoPaterno: [''],
       apellidoMaterno: [''],
@@ -177,6 +182,9 @@ export class FormComponent implements OnInit, AfterViewInit {
         this.sangre = [];
       },
     });
+
+    // Configurar documentos requeridos basado en tipoIngreso
+    this.configurarDocumentosRequeridos();
   }
 
   ngAfterViewInit() {
@@ -521,17 +529,98 @@ export class FormComponent implements OnInit, AfterViewInit {
 
     const estadoLower = estadoCivil.toLowerCase();
     const mapeo: { [key: string]: string } = {
-      'soltero': 'S',
-      'casado': 'C',
-      'divorciado': 'D',
-      's': 'S',
-      'c': 'C',
-      'd': 'D'
+      soltero: 'S',
+      casado: 'C',
+      divorciado: 'D',
+      s: 'S',
+      c: 'C',
+      d: 'D',
     };
 
     return mapeo[estadoLower] || estadoCivil;
   }
 
+  // Documentos requeridos
+  private configurarDocumentosRequeridos() {
+    // Documentos base para todos los casos
+    this.documentosRequeridos = [
+      'CURP',
+      'Acta de nacimiento actualizada',
+      'Certificado de secundaria',
+    ];
+
+    // Agregar documentos específicos según el tipo de ingreso
+    if (this.tipoIngreso === 'matricula') {
+      this.documentosRequeridos.unshift('Constancia de estudios');
+    } else if (this.tipoIngreso === 'otra-institucion') {
+      this.documentosRequeridos.unshift(
+        'Formato de solicitud de traslado',
+        'Certificado parcial de estudios o constancia con calificaciones',
+        'Tira de materias, plan de estudios o mapa curricular'
+      );
+    }
+
+    // Inicializar el objeto de archivos cargados
+    this.documentosRequeridos.forEach((doc) => {
+      this.archivosCargados[doc] = null;
+    });
+
+    // Seleccionar el primer documento por defecto
+    if (this.documentosRequeridos.length > 0) {
+      this.documentoSeleccionado = this.documentosRequeridos[0];
+    }
+  }
+
+  onDocumentoSeleccionado(evento: Event) {
+    const select = evento.target as HTMLSelectElement;
+    this.documentoSeleccionado = select.value;
+  }
+
+  onArchivoSeleccionado(evento: Event) {
+    const input = evento.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const archivo = input.files[0];
+
+      // Validar que sea PDF
+      if (archivo.type !== 'application/pdf') {
+        alert('Solo se permiten archivos PDF');
+        input.value = '';
+        return;
+      }
+
+      // Guardar el archivo
+      this.archivosCargados[this.documentoSeleccionado] = archivo;
+
+      // Limpiar el input para permitir seleccionar el mismo archivo nuevamente si es necesario
+      input.value = '';
+
+      // Mostrar mensaje de éxito
+      console.log(
+        `Archivo cargado para ${this.documentoSeleccionado}:`,
+        archivo.name
+      );
+    }
+  }
+
+  esDocumentoCargado(documento: string): boolean {
+    return this.archivosCargados[documento] !== null;
+  }
+
+  getNombreArchivo(documento: string): string {
+    const archivo = this.archivosCargados[documento];
+    return archivo ? archivo.name : '';
+  }
+
+  eliminarArchivo(documento: string) {
+    this.archivosCargados[documento] = null;
+  }
+
+  // Método helper para verificar si hay archivos cargados
+  tieneArchivosCargados(): boolean {
+    return this.documentosRequeridos.some((doc) => this.esDocumentoCargado(doc));
+  }
+
+  // Enviar formulario
   submit() {
     if (this.formulario.valid) {
       // Usar getRawValue() para incluir campos deshabilitados
