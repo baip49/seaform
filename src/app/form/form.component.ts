@@ -16,10 +16,11 @@ import {
 } from 'rxjs/operators';
 import { ApiService } from '../services/api/api';
 import { Title } from '@angular/platform-browser';
+import { HeaderComponent } from '../header/header.component';
 
 @Component({
   selector: 'app-form',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, HeaderComponent],
   templateUrl: './form.component.html',
   styleUrl: './form.component.css',
 })

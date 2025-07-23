@@ -7,10 +7,11 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../services/api/api';
+import { HeaderComponent } from '../header/header.component';
 
 @Component({
   selector: 'app-pantalla-inicial',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, HeaderComponent],
   templateUrl: './pantalla-inicial.component.html',
   styleUrl: './pantalla-inicial.component.css',
 })
