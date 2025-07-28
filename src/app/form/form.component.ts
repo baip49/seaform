@@ -17,6 +17,7 @@ import {
 import { ApiService } from '../services/api/api';
 import { Title } from '@angular/platform-browser';
 import { HeaderComponent } from '../header/header.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-form',
@@ -55,7 +56,7 @@ export class FormComponent implements OnInit, AfterViewInit {
   // Agregar propiedades para manejo de documentos
   documentosRequeridos: string[] = [];
   archivosCargados: { [key: string]: File | null } = {};
-  documentoSeleccionado: string = '';
+  documentosExistentes: { [key: string]: any } = {}; // Nueva propiedad para documentos de BD
 
   constructor(
     private fb: FormBuilder,
@@ -325,6 +326,49 @@ export class FormComponent implements OnInit, AfterViewInit {
         `Editando: ${datos.Nombre} ${datos.ApellidoPaterno}`
       );
     }
+
+    // Procesar documentos existentes
+    this.procesarDocumentosExistentes(datos);
+  }
+
+  // Nuevo método para procesar documentos existentes
+  private procesarDocumentosExistentes(datos: any) {
+    if (datos.Documentos) {
+      try {
+        let documentos: any[] = [];
+
+        // Si Documentos es un string, parsearlo como JSON
+        if (typeof datos.Documentos === 'string') {
+          documentos = JSON.parse(datos.Documentos);
+        } else {
+          documentos = datos.Documentos;
+        }
+
+        // Procesar cada documento existente
+        documentos.forEach((doc: any) => {
+          // Extraer el tipo de documento del campo NombreArchivo
+          // El formato es: "TipoDocumento|NombreRealDelArchivo"
+          const nombreCompleto = doc.NombreArchivo;
+          const separadorIndex = nombreCompleto.indexOf('|');
+
+          if (separadorIndex > -1) {
+            const tipoDocumento = nombreCompleto.substring(0, separadorIndex);
+            const nombreArchivo = nombreCompleto.substring(separadorIndex + 1);
+
+            // Guardar la información del documento existente
+            this.documentosExistentes[tipoDocumento] = {
+              id: doc.DocumentoId,
+              nombreArchivo: nombreArchivo,
+              rutaArchivo: doc.RutaArchivo,
+              tamanoArchivo: doc.TamanoArchivo,
+              fechaSubida: doc.FechaSubida,
+            };
+          }
+        });
+      } catch (error) {
+        console.error('Error al procesar documentos existentes:', error);
+      }
+    }
   }
 
   private configurarControlesCondicionales() {
@@ -565,60 +609,81 @@ export class FormComponent implements OnInit, AfterViewInit {
     this.documentosRequeridos.forEach((doc) => {
       this.archivosCargados[doc] = null;
     });
-
-    // Seleccionar el primer documento por defecto
-    if (this.documentosRequeridos.length > 0) {
-      this.documentoSeleccionado = this.documentosRequeridos[0];
-    }
   }
 
-  onDocumentoSeleccionado(evento: Event) {
-    const select = evento.target as HTMLSelectElement;
-    this.documentoSeleccionado = select.value;
-  }
-
-  onArchivoSeleccionado(evento: Event) {
+  // Modificar el método onArchivoSeleccionado para recibir el documento específico
+  onArchivoSeleccionado(evento: Event, documento: string) {
     const input = evento.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const archivo = input.files[0];
 
       // Validar que sea PDF
       if (archivo.type !== 'application/pdf') {
-        alert('Solo se permiten archivos PDF');
+        Swal.fire({
+          title: 'Documento inválido',
+          text: 'Solo se permiten archivos PDF',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+        });
         input.value = '';
         return;
       }
 
       // Guardar el archivo
-      this.archivosCargados[this.documentoSeleccionado] = archivo;
+      this.archivosCargados[documento] = archivo;
 
       // Limpiar el input para permitir seleccionar el mismo archivo nuevamente si es necesario
       input.value = '';
 
       // Mostrar mensaje de éxito
-      console.log(
-        `Archivo cargado para ${this.documentoSeleccionado}:`,
-        archivo.name
-      );
+      console.log(`Archivo cargado para ${documento}:`, archivo.name);
     }
   }
 
   esDocumentoCargado(documento: string): boolean {
-    return this.archivosCargados[documento] !== null;
+    // Verificar si hay un archivo nuevo cargado O si existe en la base de datos
+    return (
+      this.archivosCargados[documento] !== null ||
+      this.documentosExistentes[documento] !== undefined
+    );
   }
 
   getNombreArchivo(documento: string): string {
+    // Priorizar archivo nuevo cargado, si no, mostrar el existente
     const archivo = this.archivosCargados[documento];
-    return archivo ? archivo.name : '';
+    if (archivo) {
+      return archivo.name;
+    }
+
+    const documentoExistente = this.documentosExistentes[documento];
+    if (documentoExistente) {
+      return documentoExistente.nombreArchivo;
+    }
+
+    return '';
   }
 
   eliminarArchivo(documento: string) {
+    // Limpiar tanto el archivo nuevo como marcar para eliminar el existente
     this.archivosCargados[documento] = null;
+
+    // Si había un documento existente, marcarlo para eliminación
+    if (this.documentosExistentes[documento]) {
+      delete this.documentosExistentes[documento];
+    }
   }
 
-  // Método helper para verificar si hay archivos cargados
-  tieneArchivosCargados(): boolean {
-    return this.documentosRequeridos.some((doc) => this.esDocumentoCargado(doc));
+  // Método para verificar si es un documento existente (no un archivo nuevo)
+  esDocumentoExistente(documento: string): boolean {
+    return (
+      this.archivosCargados[documento] === null &&
+      this.documentosExistentes[documento] !== undefined
+    );
+  }
+
+  // Método para obtener información adicional del documento existente
+  getInfoDocumentoExistente(documento: string): any {
+    return this.documentosExistentes[documento] || null;
   }
 
   // Enviar formulario
@@ -644,17 +709,25 @@ export class FormComponent implements OnInit, AfterViewInit {
       formData.idSede = parseInt(formData.idSede, 10);
       formData.idNacionalidad = parseInt(formData.idNacionalidad, 10);
 
+      this.cargando = true;
+
       if (this.esEdicion && this.idAlumnoEditar) {
-        this.cargando = true;
         formData.id = this.idAlumnoEditar;
 
         // Agregar logging para depurar
         console.log('Datos que se envían a la API:', formData);
+        console.log('Archivos que se envían:', this.archivosCargados);
 
-        this.api.actualizarAlumno(formData).subscribe({
+        // Usar el nuevo método que incluye archivos
+        this.api.actualizarAlumno(formData, this.archivosCargados).subscribe({
           next: (response) => {
             console.log('Alumno actualizado exitosamente:', response);
-            alert('Los datos del alumno han sido actualizados correctamente');
+            Swal.fire({
+              title: 'Éxito',
+              text: 'Los datos del alumno han sido actualizados correctamente',
+              icon: 'success',
+              confirmButtonText: 'Aceptar',
+            });
             this.router.navigate(['/list']);
           },
           error: (error) => {
@@ -673,11 +746,19 @@ export class FormComponent implements OnInit, AfterViewInit {
                 })
                 .join('\n');
 
-              alert(`Errores de validación:\n${errores}`);
+              Swal.fire({
+                title: 'Errores de validación',
+                text: errores,
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+              });
             } else {
-              alert(
-                'Error al actualizar los datos del alumno. Intente nuevamente.'
-              );
+              Swal.fire({
+                title: 'Error',
+                text: 'Error al actualizar los datos del alumno. Intente nuevamente.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+              });
             }
           },
           complete: () => {
@@ -685,10 +766,73 @@ export class FormComponent implements OnInit, AfterViewInit {
           },
         });
       } else {
-        // Crear nuevo alumno (lógica existente)
+        // Crear nuevo alumno con archivos
         console.log('Datos a enviar:', formData);
+        console.log('Archivos a enviar:', this.archivosCargados);
         console.log('Tipo de ingreso:', this.tipoIngreso);
+
+        this.api.crearAlumno(formData, this.archivosCargados).subscribe({
+          next: (response) => {
+            console.log('Alumno creado exitosamente:', response);
+            Swal.fire({
+              title: 'Éxito',
+              text: 'El alumno ha sido registrado correctamente',
+              icon: 'success',
+              confirmButtonText: 'Aceptar',
+            });
+            this.router.navigate(['/list']);
+          },
+          error: (error) => {
+            console.error('Error al crear alumno:', error);
+
+            if (error.status === 422 && error.error && error.error.detail) {
+              const errores = error.error.detail
+                .map((err: any) => {
+                  return `${err.loc ? err.loc.join(' -> ') : 'Campo'}: ${
+                    err.msg
+                  }`;
+                })
+                .join('\n');
+
+              Swal.fire({
+                title: 'Errores de validación',
+                text: errores,
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+              });
+            } else {
+              Swal.fire({
+                title: 'Error',
+                text: 'Error al registrar el alumno. Intente nuevamente.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+              });
+            }
+          },
+          complete: () => {
+            this.cargando = false;
+          },
+        });
       }
+    } else {
+      Swal.fire({
+        title: 'Formulario incompleto',
+        text: 'Por favor complete todos los campos requeridos',
+        icon: 'warning',
+        confirmButtonText: 'Aceptar',
+      });
     }
+  }
+
+  getDocumentosCargados(): number {
+    return this.documentosRequeridos.filter((doc) =>
+      this.esDocumentoCargado(doc)
+    ).length;
+  }
+
+  getPorcentajeProgreso(): number {
+    const total = this.documentosRequeridos.length;
+    const cargados = this.getDocumentosCargados();
+    return total > 0 ? Math.round((cargados / total) * 100) : 0;
   }
 }

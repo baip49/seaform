@@ -3,6 +3,7 @@ import { ApiService } from '../services/api/api';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-list',
@@ -48,26 +49,41 @@ export class ListComponent {
   }
 
   eliminarAlumno(alumno: any) {
-    if (
-      confirm(
-        `¿Estás seguro de que deseas eliminar al alumno ${alumno.Nombre}?`
-      )
-    ) {
-      this.cargando = true;
-      // Aquí se debería implementar la lógica para eliminar el alumno
-      // Por ejemplo, llamar a un método en ApiService para eliminar el alumno
-      // y luego recargar la lista de alumnos.
-      this.api.getAlumnos().subscribe({
-        next: () => {
-          this.cargarAlumnos();
-          alert('Alumno eliminado correctamente');
-        },
-        error: (error) => {
-          console.error('Error al eliminar alumno:', error);
-          this.error = 'Error al eliminar el alumno';
-          this.cargando = false;
-        },
-      });
-    }
+    Swal.fire({
+      title: '¿Estás seguro?',
+      html: `¿Deseas eliminar al alumno <strong>${alumno.Nombre}</strong>?
+      <br>¡No podrás revertir esta acción!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.cargando = true;
+        // Aquí debe ir la lógica para eliminar el alumno
+        this.api.getAlumnos().subscribe({
+          next: () => {
+            this.cargarAlumnos();
+            Swal.fire({
+              title: '¡Eliminado!',
+              text: 'El alumno ha sido eliminado correctamente.',
+              icon: 'success',
+            });
+          },
+          error: (error) => {
+            console.error('Error al eliminar alumno:', error);
+            this.error = 'Error al eliminar el alumno';
+            this.cargando = false;
+            Swal.fire({
+              title: 'Error',
+              text: 'Hubo un error al eliminar el alumno.',
+              icon: 'error',
+            });
+          },
+        });
+      }
+    });
   }
 }

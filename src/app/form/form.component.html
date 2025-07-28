@@ -1004,41 +1004,105 @@
         <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
           <div class="block px-1 text-lg mb-4">
             Documentos requeridos:
-            <ul class="list-none px-1 mb-6 mt-3">
-              @for (documento of documentosRequeridos; track documento) {
-              <li
-                class="text-center sm:text-left mb-2 last:mb-0 border-gray-900 border-dashed pb-1 last:pb-0 flex flex-col sm:flex-row border-b-1 last:border-b-0 sm:border-b-0 items-center before:content-['-_'] before:me-2 before:hidden sm:before:inline-block transition-colors duration-300"
+          </div>
+          
+          <!-- Grid de documentos -->
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            @for (documento of documentosRequeridos; track documento; let i = $index) {
+            <div class="flex flex-col h-full">
+              <!-- Título del documento -->
+              <label 
+                [for]="'documento-' + i" 
+                class="block px-1 mb-3 text-sm font-medium min-h-[2.5rem] flex items-start"
                 [ngClass]="{
-                  'text-green-600 text-md': esDocumentoCargado(documento),
-                  'text-red-600 text-md': !esDocumentoCargado(documento)
+                  'text-green-600': esDocumentoCargado(documento),
+                  'text-gray-700': !esDocumentoCargado(documento)
                 }"
               >
-                <span class="flex-grow">{{ documento }}</span>
-                @if (esDocumentoCargado(documento)) {
-                <div
-                  class="bg-gray-300/70 sm:bg-transparent rounded-lg p-1 sm:p-0 flex items-center ml-2"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="size-5 mr-2 text-green-600"
+                <span class="leading-tight">
+                  {{ documento }}
+                  @if (esDocumentoCargado(documento)) {
+                    <span class="text-green-600 ml-1">✓</span>
+                  }
+                </span>
+              </label>
+              
+              <!-- Contenedor con altura fija para input file o vista del archivo cargado -->
+              <div class="flex-1 min-h-[8rem] flex flex-col">
+                @if (!esDocumentoCargado(documento)) {
+                <!-- Input file cuando no hay archivo -->
+                <div class="relative flex-1">
+                  <input
+                    type="file"
+                    [id]="'documento-' + i"
+                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    accept=".pdf"
+                    (change)="onArchivoSeleccionado($event, documento)"
+                  />
+                  <div 
+                    class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="m4.5 12.75 6 6 9-13.5"
-                    />
-                  </svg>
-                  <span class="text-sm text-green-700 mr-2">{{
-                    getNombreArchivo(documento)
-                  }}</span>
+                    <svg
+                      class="w-8 h-8 mb-2 text-gray-500"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 20 16"
+                    >
+                      <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                      />
+                    </svg>
+                    <p class="text-xs text-center text-gray-500 mb-1">
+                      <span class="font-semibold">Haz clic para subir</span>
+                    </p>
+                    <p class="text-xs text-center text-gray-500">Solo PDF</p>
+                  </div>
+                </div>
+                } @else {
+                <!-- Vista del archivo cargado - compacta -->
+                <div class="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg h-full">
+                  <div class="flex items-center flex-1 min-w-0">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="w-5 h-5 mr-2 text-green-600 flex-shrink-0"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m4.5 12.75 6 6 9-13.5"
+                      />
+                    </svg>
+                    <div class="min-w-0 flex-1">
+                      <p class="text-sm font-medium text-green-800">
+                        @if (esDocumentoExistente(documento)) {
+                          Archivo existente
+                        } @else {
+                          Archivo cargado
+                        }
+                      </p>
+                      <p class="text-xs text-green-600 truncate" [title]="getNombreArchivo(documento)">
+                        {{ getNombreArchivo(documento) }}
+                      </p>
+                      @if (esDocumentoExistente(documento)) {
+                        <p class="text-xs text-gray-500">
+                          Subido: {{ getInfoDocumentoExistente(documento)?.fechaSubida | date:'short' }}
+                        </p>
+                      }
+                    </div>
+                  </div>
                   <button
                     type="button"
                     (click)="eliminarArchivo(documento)"
-                    class="text-red-800 bg-red-300/50 p-2 sm:p-1 rounded-md flex items-center text-lg peer-checked/localidad:bg-red-600/60 peer-checked/localidad:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg"
+                    class="text-red-800 bg-red-300/50 p-3 rounded-lg flex items-center text-lg transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg"
                     title="Eliminar archivo"
                   >
                     <svg
@@ -1047,7 +1111,7 @@
                       viewBox="0 0 24 24"
                       stroke-width="1.5"
                       stroke="currentColor"
-                      class="size-4"
+                      class="w-4 h-4"
                     >
                       <path
                         stroke-linecap="round"
@@ -1058,171 +1122,28 @@
                   </button>
                 </div>
                 }
-              </li>
-              }
-            </ul>
-          </div>
-
-          <!-- Selector de tipo de documento -->
-          <div class="mb-4">
-            <label for="tipoDocumento" class="block px-1 mb-3 text-lg">
-              Selecciona el documento a subir:
-            </label>
-            <select
-              id="tipoDocumento"
-              [value]="documentoSeleccionado"
-              (change)="onDocumentoSeleccionado($event)"
-              class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 transition"
-            >
-              @for (documento of documentosRequeridos; track documento) {
-              <option [value]="documento">{{ documento }}</option>
-              }
-            </select>
-          </div>
-
-          <!-- Área de carga de archivos -->
-          <div class="flex">
-            <div class="flex items-center justify-center w-full">
-              <label
-                for="documentos"
-                class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-100 hover:bg-gray-200 transition"
-                [ngClass]="{
-                  'border-green-500 bg-green-50': esDocumentoCargado(
-                    documentoSeleccionado
-                  ),
-                  'border-red-500 bg-red-50': !esDocumentoCargado(
-                    documentoSeleccionado
-                  )
-                }"
-              >
-                <div
-                  class="flex flex-col items-center justify-center px-5 pt-5 pb-6"
-                >
-                  @if (esDocumentoCargado(documentoSeleccionado)) {
-                  <!-- Mostrar cuando ya hay archivo cargado -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="w-8 h-8 mb-4 text-green-600"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="m4.5 12.75 6 6 9-13.5"
-                    />
-                  </svg>
-                  <p
-                    class="mb-2 text-lg text-center text-green-600 font-semibold"
-                  >
-                    {{ documentoSeleccionado }} | Archivo cargado
-                  </p>
-                  <p class="text-sm text-center text-green-600">
-                    {{ getNombreArchivo(documentoSeleccionado) }}
-                  </p>
-                  <p class="text-sm text-center text-gray-500 mt-2">
-                    Haz clic para cambiar el archivo
-                  </p>
-                  } @else {
-                  <!-- Mostrar cuando no hay archivo -->
-                  <svg
-                    class="w-8 h-8 mb-4 text-gray-500"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 16"
-                  >
-                    <path
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                    />
-                  </svg>
-                  <p class="mb-2 text-sm text-center text-gray-500">
-                    <span class="font-semibold">Haz clic para subir</span>
-                  </p>
-                  <p class="text-lg text-center text-gray-700 font-medium mb-2">
-                    {{ documentoSeleccionado }}
-                  </p>
-                  <p class="text-sm text-center text-gray-500">
-                    Solo archivos PDF
-                  </p>
-                  }
-                </div>
-                <input
-                  id="documentos"
-                  type="file"
-                  class="hidden"
-                  accept=".pdf"
-                  (change)="onArchivoSeleccionado($event)"
-                />
-              </label>
-            </div>
-          </div>
-
-          <!-- Resumen de archivos cargados -->
-          @if (tieneArchivosCargados()) {
-          <div class="mt-6 p-4 bg-green-50 rounded-lg border border-green-200">
-            <h4 class="text-lg font-medium text-green-800 mb-3">
-              Archivos cargados:
-            </h4>
-            <div class="space-y-2">
-              @for (documento of documentosRequeridos; track documento) { @if
-              (esDocumentoCargado(documento)) {
-              <div
-                class="flex items-center justify-between bg-white p-3 rounded-lg border border-green-200"
-              >
-                <div class="flex items-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="size-5 mr-2 text-green-600"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="m4.5 12.75 6 6 9-13.5"
-                    />
-                  </svg>
-                  <div>
-                    <p class="font-medium text-sm text-gray-900">
-                      {{ documento }}
-                    </p>
-                    <p class="text-sm text-gray-600">
-                      {{ getNombreArchivo(documento) }}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  (click)="eliminarArchivo(documento)"
-                  class="text-red-800 bg-red-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/localidad:bg-red-600/60 peer-checked/localidad:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg"
-                  title="Eliminar archivo"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="size-5"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M6 18 18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
               </div>
-              } }
+            </div>
+            }
+          </div>
+          
+          <!-- Resumen de progreso -->
+          @if (documentosRequeridos.length > 0) {
+          <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-medium text-blue-800">
+                Progreso de documentos
+              </h4>
+              <span class="text-sm text-blue-600">
+                {{ getDocumentosCargados() }} 
+                de {{ documentosRequeridos.length }} completados
+              </span>
+            </div>
+            <div class="mt-2 w-full bg-blue-200 rounded-full h-2">
+              <div 
+                class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                [style.width.%]="getPorcentajeProgreso()"
+              ></div>
             </div>
           </div>
           }

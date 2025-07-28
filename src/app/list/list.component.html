@@ -36,6 +36,7 @@
             <th scope="col" class="px-6 py-2">CURP</th>
             <th scope="col" class="px-6 py-2">Nombre</th>
             <th scope="col" class="px-6 py-2">Matrícula</th>
+            <th scope="col" class="px-6 py-2">Correo</th>
             <th scope="colgroup" class="px-6">Acciones</th>
           </tr>
         </thead>
@@ -49,6 +50,7 @@
             <td class="px-6 py-2">{{ alumno.CURP }}</td>
             <td class="px-6 py-2">{{ alumno.Nombre }}</td>
             <td class="px-6 py-2">{{ alumno.Matricula }}</td>
+            <td class="px-6 py-2">{{ alumno.Correo }}</td>
             <td class="px-6 py-2 flex gap-3">
               <button
                 (click)="eliminarAlumno(alumno)"
