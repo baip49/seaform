@@ -597,27 +597,26 @@ export class FormComponent implements OnInit, AfterViewInit {
 
   // Documentos requeridos
   private configurarDocumentosRequeridos() {
-    // Obtener el IdRol del formulario o de los datos del alumno
+    // Mapear tipoIngreso a IdRol (siempre usar la lógica de negocio correcta)
     let idRol: number;
 
-    if (this.esEdicion && this.datosAlumno?.IdRol) {
-      // En edición, usar el IdRol de los datos del alumno
-      idRol = this.datosAlumno.IdRol;
-    } else {
-      // En creación, mapear tipoIngreso a IdRol
-      switch (this.tipoIngreso) {
-        case 'matricula':
-          idRol = 1;
-          break;
-        case 'primera-vez':
-          idRol = 2;
-          break;
-        case 'otra-institucion':
-          idRol = 3;
-          break;
-        default:
-          idRol = 2;
-      }
+    switch (this.tipoIngreso) {
+      case 'matricula':
+        idRol = 1;
+        break;
+      case 'primera-vez':
+        idRol = 2;
+        break;
+      case 'otra-institucion':
+        idRol = 3;
+        break;
+      default:
+        // Si es edición y no hay tipoIngreso, usar el IdRol existente
+        if (this.esEdicion && this.datosAlumno?.IdRol) {
+          idRol = this.datosAlumno.IdRol;
+        } else {
+          idRol = 2; // Por defecto
+        }
     }
 
     // Establecer el IdRol en el formulario
@@ -642,22 +641,6 @@ export class FormComponent implements OnInit, AfterViewInit {
         'Tira de materias, plan de estudios o mapa curricular'
       );
     }
-
-    // Inicializar el objeto de archivos cargados
-    this.documentosRequeridos.forEach((doc) => {
-      this.archivosCargados[doc] = null;
-    });
-
-    // Agregar validadores de documentos al formulario
-    this.documentosRequeridos.forEach((doc) => {
-      const controlName = `documento_${doc
-        .replace(/\s+/g, '_')
-        .replace(/[^\w]/g, '')}`;
-      this.formulario.addControl(
-        controlName,
-        this.fb.control('', [Validators.required])
-      );
-    });
   }
 
   // Modificar el método onArchivoSeleccionado para recibir el documento específico
