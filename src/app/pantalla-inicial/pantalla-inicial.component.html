@@ -16,7 +16,7 @@
       <div class="bg-slate-100 flex justify-center flex-col">
         <!-- Tiene matrícula -->
         <div class="rounded-lg p-3 flex justify-center">
-          <div class="flex space-x-3">
+          <div class="flex space-y-1 sm:space-y-0 sm:space-x-3 flex-col sm:flex-row">
             <label class="flex items-center">
               <input
                 (click)="
@@ -31,7 +31,7 @@
                 required
               />
               <span
-                class="bg-green-300/50 px-3 py-2 rounded-xl flex items-center text-xl peer-checked/tieneMatricula:bg-green-600 peer-checked/tieneMatricula:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-green-800 hover:shadow-lg"
+                class="bg-green-300/50 px-3 py-2 rounded-xl flex justify-center items-center text-xl peer-checked/tieneMatricula:bg-green-600 peer-checked/tieneMatricula:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-green-800 hover:shadow-lg w-full"
                 ><svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -63,7 +63,7 @@
                 required
               />
               <span
-                class="bg-red-300/50 px-3 py-2 rounded-xl flex items-center text-xl peer-checked/tieneMatricula:bg-red-600/60 peer-checked/tieneMatricula:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg"
+                class="bg-red-300/50 px-3 py-2 rounded-xl flex justify-center items-center text-xl peer-checked/tieneMatricula:bg-red-600/60 peer-checked/tieneMatricula:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg w-full"
                 ><svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -110,7 +110,7 @@
             >¿Qué opción te describe mejor?</label
           >
           <div class="rounded-lg p-3 flex justify-center">
-            <div class="flex space-x-3">
+            <div class="flex space-y-1 sm:space-y-0 sm:space-x-3 flex-col sm:flex-row">
               <label class="flex items-center">
                 <input
                   (click)="tipo(true)"
@@ -123,7 +123,7 @@
                   required
                 />
                 <span
-                  class="bg-blue-300 px-3 py-2 rounded-xl flex items-center text-xl peer-checked/primeraVez:bg-sky-600 peer-checked/primeraVez:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-sky-800 hover:shadow-lg"
+                  class="bg-blue-300 px-3 py-2 rounded-xl flex justify-center items-center text-lg text-center peer-checked/primeraVez:bg-sky-600 peer-checked/primeraVez:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-sky-800 hover:shadow-lg w-full"
                 >
                   Es mi primera vez en un bachillerato</span
                 >
@@ -140,7 +140,7 @@
                   required
                 />
                 <span
-                  class="bg-blue-300 px-3 py-2 rounded-xl flex items-center text-xl peer-checked/tipo2:bg-sky-600 peer-checked/tipo2:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-sky-800 hover:shadow-lg"
+                  class="bg-blue-300 px-3 py-2 rounded-xl flex justify-center items-center text-lg text-center peer-checked/tipo2:bg-sky-600 peer-checked/tipo2:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-sky-800 hover:shadow-lg w-full"
                 >
                   Vengo de otra institución</span
                 >

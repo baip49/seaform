@@ -1,5 +1,4 @@
 <div class="bg-gray-100 min-h-screen">
-  
   <!-- Header -->
   <app-header [esEdicion]="esEdicion" [title]="title"></app-header>
 
@@ -10,11 +9,12 @@
       (ngSubmit)="submit()"
       class="bg-white rounded-lg shadow-lg overflow-hidden"
     >
+      <input type="hidden" formControlName="idRol" />
       <div class="bg-slate-800 py-6 px-6 flex items-center">
         <div class="w-1 h-8 bg-blue-400 mr-4"></div>
         <span class="text-white text-2xl">Datos escolares</span>
       </div>
-      <!-- Datos Escolares -->
+      <!-- Datos escolares -->
       <div class="p-6 space-y-6">
         <div class="flex flex-col md:flex-row gap-4">
           <!-- Matricula -->
@@ -33,13 +33,19 @@
           </div>
           <!-- Sede -->
           <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
-            <label for="idSede" class="block px-1 mb-3 text-lg"
+            <label
+              for="idSede"
+              class="block px-1 mb-3 text-lg after:ml-0.5 after:text-red-500 after:content-['*']"
               >Selecciona la sede a la que te inscribes</label
             >
             <select
               formControlName="idSede"
               id="idSede"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('idSede')
+              }"
               required
             >
               <option [value]="1">Sede 02 | Tuxtla Gutiérrez</option>
@@ -67,6 +73,10 @@
               id="nombre"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="César Enrique"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('nombre')
+              }"
               required
             />
             <div class="px-1 text-gray-600">Nombre/s</div>
@@ -82,6 +92,10 @@
               id="apellidoPaterno"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="Sánchez"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('apellidoPaterno')
+              }"
               required
             />
             <div class="px-1 text-gray-600">Apellido Paterno</div>
@@ -97,6 +111,10 @@
               id="apellidoMaterno"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="Montoya"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('apellidoMaterno')
+              }"
               required
             />
             <div class="px-1 text-gray-600">Apellido Materno</div>
@@ -113,6 +131,10 @@
               id="curp"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="SANC890101HCHNSS00"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('curp')
+              }"
               required
             />
           </div>
@@ -126,6 +148,10 @@
               formControlName="fechaNacimiento"
               id="fechaNacimiento"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('fechaNacimiento')
+              }"
               required
             />
           </div>
@@ -145,6 +171,10 @@
                 />
                 <span
                   class="bg-blue-300/65 px-3 py-3 rounded-xl flex md:w-full md:justify-center items-center text-lg peer-checked/sexo:bg-blue-600 peer-checked/sexo:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-blue-800 hover:shadow-lg"
+                  [ngClass]="{
+                    'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                      esCampoInvalido('sexo')
+                  }"
                   >Hombre
                 </span>
               </label>
@@ -160,6 +190,10 @@
                 />
                 <span
                   class="bg-pink-300/65 px-3 py-3 rounded-xl flex items-center md:w-full md:justify-center text-lg peer-checked/sexo:bg-pink-600 peer-checked/sexo:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-pink-800 hover:shadow-lg"
+                  [ngClass]="{
+                    'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                      esCampoInvalido('sexo')
+                  }"
                   >Mujer
                 </span>
               </label>
@@ -176,6 +210,10 @@
               id="telefono"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="9611234567"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('telefono')
+              }"
               required
             />
           </div>
@@ -193,6 +231,10 @@
               id="correo"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="cesar@cobach.mx"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('correo')
+              }"
               required
             />
             <div class="px-1 text-gray-600">Correo electrónico personal</div>
@@ -206,6 +248,10 @@
               formControlName="estadoCivil"
               id="estadoCivil"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('estadoCivil')
+              }"
               required
             >
               <option value="S">Soltero</option>
@@ -223,6 +269,10 @@
               formControlName="idNacionalidad"
               id="idNacionalidad"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('idNacionalidad')
+              }"
               required
             >
               <option [value]="1">Mexicana</option>
@@ -251,6 +301,10 @@
                 />
                 <span
                   class="bg-green-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/lengua:bg-green-600 peer-checked/lengua:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-green-800 hover:shadow-lg"
+                  [ngClass]="{
+                    'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                      esCampoInvalido('hablaLengua')
+                  }"
                   ><svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -283,6 +337,10 @@
                 />
                 <span
                   class="bg-red-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/lengua:bg-red-600/60 peer-checked/lengua:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg"
+                  [ngClass]="{
+                    'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                      esCampoInvalido('hablaLengua')
+                  }"
                   ><svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -367,6 +425,10 @@
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="Buscar lengua indígena..."
               autocomplete="off"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('lenguaSearch')
+              }"
               required
             />
             <div class="px-1 text-gray-600">
@@ -444,6 +506,10 @@
                 />
                 <span
                   class="bg-green-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/beca:bg-green-600 peer-checked/beca:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-green-800 hover:shadow-lg"
+                  [ngClass]="{
+                    'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                      esCampoInvalido('tieneBeca')
+                  }"
                   ><svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -474,6 +540,10 @@
                 />
                 <span
                   class="bg-red-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/beca:bg-red-600/60 peer-checked/beca:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg"
+                  [ngClass]="{
+                    'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                      esCampoInvalido('tieneBeca')
+                  }"
                   ><svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -505,6 +575,10 @@
               id="queBeca"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="Benito Juárez"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('queBeca')
+              }"
               required
             />
           </div>
@@ -531,6 +605,10 @@
               id="nombreTutor"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="Lucila"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('nombreTutor')
+              }"
               required
             />
             <div class="px-1 text-gray-600">Nombre/s</div>
@@ -546,6 +624,10 @@
               id="apellidoPaternoTutor"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="Montoya"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('apellidoPaternoTutor')
+              }"
               required
             />
             <div class="px-1 text-gray-600">Apellido Paterno</div>
@@ -561,6 +643,10 @@
               id="apellidoMaternoTutor"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="Ramos"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('apellidoMaternoTutor')
+              }"
               required
             />
             <div class="px-1 text-gray-600">Apellido Materno</div>
@@ -577,6 +663,10 @@
             id="telefonoTutor"
             class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
             placeholder="9611234567"
+            [ngClass]="{
+              'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                esCampoInvalido('telefonoTutor')
+            }"
             required
           />
         </div>
@@ -598,6 +688,10 @@
               id="calle"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="Avenida central"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('calle')
+              }"
               required
             />
           </div>
@@ -627,6 +721,10 @@
               id="codigoPostal"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="29230"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('codigoPostal')
+              }"
               required
             />
           </div>
@@ -641,6 +739,10 @@
               id="numeroExterior"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="123"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('numeroExterior')
+              }"
               required
             />
           </div>
@@ -723,6 +825,10 @@
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="Buscar localidad..."
               autocomplete="off"
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('localidadSearch')
+              }"
               required
             />
             <div class="px-1 text-gray-600">
@@ -816,6 +922,10 @@
                 />
                 <span
                   class="bg-green-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/alergia:bg-green-600 peer-checked/alergia:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-green-800 hover:shadow-lg"
+                  [ngClass]="{
+                    'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                      esCampoInvalido('tieneAlergias')
+                  }"
                   ><svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -846,6 +956,10 @@
                 />
                 <span
                   class="bg-red-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/alergia:bg-red-600/60 peer-checked/alergia:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg"
+                  [ngClass]="{
+                    'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                      esCampoInvalido('tieneAlergias')
+                  }"
                   ><svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -877,6 +991,10 @@
               id="alergias"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="Sulfas, Polvo, etc."
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('alergias')
+              }"
               required
             />
           </div>
@@ -903,6 +1021,10 @@
                 />
                 <span
                   class="bg-green-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/discapacidad:bg-green-600 peer-checked/discapacidad:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-green-800 hover:shadow-lg"
+                  [ngClass]="{
+                    'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                      esCampoInvalido('tieneDiscapacidad')
+                  }"
                   ><svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -933,6 +1055,10 @@
                 />
                 <span
                   class="bg-red-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/discapacidad:bg-red-600/60 peer-checked/discapacidad:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-red-800 hover:shadow-lg"
+                  [ngClass]="{
+                    'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                      esCampoInvalido('tieneDiscapacidad')
+                  }"
                   ><svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -964,6 +1090,10 @@
               id="discapacidad"
               class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
               placeholder="Motriz, Auditiva, Visual, etc."
+              [ngClass]="{
+                'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                  esCampoInvalido('discapacidad')
+              }"
               required
             />
           </div>
@@ -984,9 +1114,14 @@
                   [id]="'tipoSangre' + tipoSangre.Id"
                   [value]="tipoSangre.Descripcion"
                   class="peer/tipoSangre hidden"
+                  required
                 />
                 <span
                   class="bg-blue-300/50 px-3 py-3 rounded-xl flex items-center text-lg peer-checked/tipoSangre:bg-sky-600 peer-checked/tipoSangre:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-sky-800 hover:shadow-lg cursor-pointer"
+                  [ngClass]="{
+                    'ring-2 ring-red-500 shadow-lg/25 shadow-red-500':
+                      esCampoInvalido('tipoSangre')
+                  }"
                 >
                   {{ tipoSangre.Descripcion }}
                 </span>
@@ -1002,31 +1137,33 @@
       <!-- Documentos -->
       <div class="p-6 space-y-6">
         <div class="w-full flex flex-col bg-slate-100 rounded-lg p-3">
-          <div class="block px-1 text-lg mb-4">
-            Documentos requeridos:
-          </div>
-          
+          <div class="block px-1 text-lg mb-4">Documentos requeridos:</div>
+
           <!-- Grid de documentos -->
           <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            @for (documento of documentosRequeridos; track documento; let i = $index) {
+            @for (documento of documentosRequeridos; track documento; let i =
+            $index) {
             <div class="flex flex-col h-full">
               <!-- Título del documento -->
-              <label 
-                [for]="'documento-' + i" 
+              <label
+                [for]="'documento-' + i"
                 class="block px-1 mb-3 text-sm font-medium min-h-[2.5rem] flex items-start"
                 [ngClass]="{
                   'text-green-600': esDocumentoCargado(documento),
-                  'text-gray-700': !esDocumentoCargado(documento)
+                  'text-gray-700': !esDocumentoCargado(documento),
+                  'text-red-600':
+                    !esDocumentoValido(documento) && formularioEnviado
                 }"
               >
                 <span class="leading-tight">
                   {{ documento }}
+                  <span class="text-red-500 ml-1">*</span>
                   @if (esDocumentoCargado(documento)) {
-                    <span class="text-green-600 ml-1">✓</span>
+                  <span class="text-green-600 ml-1">✓</span>
                   }
                 </span>
               </label>
-              
+
               <!-- Contenedor con altura fija para input file o vista del archivo cargado -->
               <div class="flex-1 min-h-[8rem] flex flex-col">
                 @if (!esDocumentoCargado(documento)) {
@@ -1038,12 +1175,27 @@
                     class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     accept=".pdf"
                     (change)="onArchivoSeleccionado($event, documento)"
+                    required
                   />
-                  <div 
-                    class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+                  <div
+                    class="flex flex-col items-center justify-center w-full h-full border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+                    [ngClass]="{
+                      'border-gray-300': !(
+                        !esDocumentoValido(documento) && formularioEnviado
+                      ),
+                      'border-red-500 bg-red-50':
+                        !esDocumentoValido(documento) && formularioEnviado
+                    }"
                   >
                     <svg
-                      class="w-8 h-8 mb-2 text-gray-500"
+                      class="w-8 h-8 mb-2"
+                      [ngClass]="{
+                        'text-gray-500': !(
+                          !esDocumentoValido(documento) && formularioEnviado
+                        ),
+                        'text-red-500':
+                          !esDocumentoValido(documento) && formularioEnviado
+                      }"
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -1057,15 +1209,42 @@
                         d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
                       />
                     </svg>
-                    <p class="text-xs text-center text-gray-500 mb-1">
+                    <p
+                      class="text-xs text-center mb-1"
+                      [ngClass]="{
+                        'text-gray-500': !(
+                          !esDocumentoValido(documento) && formularioEnviado
+                        ),
+                        'text-red-500':
+                          !esDocumentoValido(documento) && formularioEnviado
+                      }"
+                    >
                       <span class="font-semibold">Haz clic para subir</span>
                     </p>
-                    <p class="text-xs text-center text-gray-500">Solo PDF</p>
+                    <p
+                      class="text-xs text-center"
+                      [ngClass]="{
+                        'text-gray-500': !(
+                          !esDocumentoValido(documento) && formularioEnviado
+                        ),
+                        'text-red-500':
+                          !esDocumentoValido(documento) && formularioEnviado
+                      }"
+                    >
+                      Solo PDF
+                    </p>
                   </div>
                 </div>
-                } @else {
+                <!-- Mensaje de error -->
+                @if (!esDocumentoValido(documento) && formularioEnviado) {
+                <div class="mt-2 text-xs text-red-500">
+                  Este documento es obligatorio
+                </div>
+                } } @else {
                 <!-- Vista del archivo cargado - compacta -->
-                <div class="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg h-full">
+                <div
+                  class="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg h-full"
+                >
                   <div class="flex items-center flex-1 min-w-0">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -1083,19 +1262,23 @@
                     </svg>
                     <div class="min-w-0 flex-1">
                       <p class="text-sm font-medium text-green-800">
-                        @if (esDocumentoExistente(documento)) {
-                          Archivo existente
-                        } @else {
-                          Archivo cargado
-                        }
+                        @if (esDocumentoExistente(documento)) { Archivo
+                        existente } @else { Archivo cargado }
                       </p>
-                      <p class="text-xs text-green-600 truncate" [title]="getNombreArchivo(documento)">
+                      <p
+                        class="text-xs text-green-600 truncate"
+                        [title]="getNombreArchivo(documento)"
+                      >
                         {{ getNombreArchivo(documento) }}
                       </p>
                       @if (esDocumentoExistente(documento)) {
-                        <p class="text-xs text-gray-500">
-                          Subido: {{ getInfoDocumentoExistente(documento)?.fechaSubida | date:'short' }}
-                        </p>
+                      <p class="text-xs text-gray-500">
+                        Subido:
+                        {{
+                          getInfoDocumentoExistente(documento)?.fechaSubida
+                            | date : "short"
+                        }}
+                      </p>
                       }
                     </div>
                   </div>
@@ -1126,7 +1309,7 @@
             </div>
             }
           </div>
-          
+
           <!-- Resumen de progreso -->
           @if (documentosRequeridos.length > 0) {
           <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
@@ -1135,12 +1318,12 @@
                 Progreso de documentos
               </h4>
               <span class="text-sm text-blue-600">
-                {{ getDocumentosCargados() }} 
+                {{ getDocumentosCargados() }}
                 de {{ documentosRequeridos.length }} completados
               </span>
             </div>
             <div class="mt-2 w-full bg-blue-200 rounded-full h-2">
-              <div 
+              <div
                 class="bg-blue-600 h-2 rounded-full transition-all duration-300"
                 [style.width.%]="getPorcentajeProgreso()"
               ></div>

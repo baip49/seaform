@@ -53,6 +53,8 @@ export class FormComponent implements OnInit, AfterViewInit {
 
   cargando = false;
 
+  formularioEnviado = false;
+
   // Agregar propiedades para manejo de documentos
   documentosRequeridos: string[] = [];
   archivosCargados: { [key: string]: File | null } = {};
@@ -126,6 +128,9 @@ export class FormComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    // Configurar documentos requeridos basado en tipoIngreso
+    this.configurarDocumentosRequeridos();
+
     // Llenar el formulario con los datos del alumno si existen
     if (this.datosAlumno) {
       this.llenarFormulario(this.datosAlumno);
@@ -184,9 +189,6 @@ export class FormComponent implements OnInit, AfterViewInit {
         this.sangre = [];
       },
     });
-
-    // Configurar documentos requeridos basado en tipoIngreso
-    this.configurarDocumentosRequeridos();
   }
 
   ngAfterViewInit() {
@@ -201,6 +203,7 @@ export class FormComponent implements OnInit, AfterViewInit {
   private llenarFormulario(datos: any) {
     // Agregar este console.log para depurar
     console.log('Datos recibidos:', datos);
+
     const mapearEstadoCivil = (estado: string) => {
       switch (estado.toLowerCase()) {
         case 'soltero':
@@ -244,7 +247,14 @@ export class FormComponent implements OnInit, AfterViewInit {
       fechaNacimiento: datos.FechaNacimiento
         ? this.formatearFecha(datos.FechaNacimiento)
         : '',
-      sexo: datos.Sexo,
+      sexo:
+        datos.Sexo === 'F'
+          ? 'M'
+          : datos.Sexo === 'M'
+          ? 'H'
+          : datos.Sexo === 'H' || datos.Sexo === 'M'
+          ? datos.Sexo
+          : '',
       telefono: datos.Telefono,
       correo: datos.Correo,
       idSede: datos.IdSede,
@@ -511,7 +521,7 @@ export class FormComponent implements OnInit, AfterViewInit {
   selectLocalidad(localidad: any) {
     this.localidadSeleccionada = localidad;
     this.formulario.patchValue({
-      idLocalidad: localidad.Id,
+      idLocalidad: localidad.id,
       localidadSearch: localidad.NombreLocalidad || localidad.Nombre,
     });
     this.localidadesFiltradas = [];
@@ -587,6 +597,32 @@ export class FormComponent implements OnInit, AfterViewInit {
 
   // Documentos requeridos
   private configurarDocumentosRequeridos() {
+    // Obtener el IdRol del formulario o de los datos del alumno
+    let idRol: number;
+
+    if (this.esEdicion && this.datosAlumno?.IdRol) {
+      // En edición, usar el IdRol de los datos del alumno
+      idRol = this.datosAlumno.IdRol;
+    } else {
+      // En creación, mapear tipoIngreso a IdRol
+      switch (this.tipoIngreso) {
+        case 'matricula':
+          idRol = 1;
+          break;
+        case 'primera-vez':
+          idRol = 2;
+          break;
+        case 'otra-institucion':
+          idRol = 3;
+          break;
+        default:
+          idRol = 2;
+      }
+    }
+
+    // Establecer el IdRol en el formulario
+    this.formulario.patchValue({ idRol: idRol });
+
     // Documentos base para todos los casos
     this.documentosRequeridos = [
       'CURP',
@@ -594,10 +630,12 @@ export class FormComponent implements OnInit, AfterViewInit {
       'Certificado de secundaria',
     ];
 
-    // Agregar documentos específicos según el tipo de ingreso
-    if (this.tipoIngreso === 'matricula') {
+    // Agregar documentos específicos según el IdRol
+    if (idRol === 1) {
+      // Matrícula existente
       this.documentosRequeridos.unshift('Constancia de estudios');
-    } else if (this.tipoIngreso === 'otra-institucion') {
+    } else if (idRol === 3) {
+      // Otra institución
       this.documentosRequeridos.unshift(
         'Formato de solicitud de traslado',
         'Certificado parcial de estudios o constancia con calificaciones',
@@ -608,6 +646,17 @@ export class FormComponent implements OnInit, AfterViewInit {
     // Inicializar el objeto de archivos cargados
     this.documentosRequeridos.forEach((doc) => {
       this.archivosCargados[doc] = null;
+    });
+
+    // Agregar validadores de documentos al formulario
+    this.documentosRequeridos.forEach((doc) => {
+      const controlName = `documento_${doc
+        .replace(/\s+/g, '_')
+        .replace(/[^\w]/g, '')}`;
+      this.formulario.addControl(
+        controlName,
+        this.fb.control('', [Validators.required])
+      );
     });
   }
 
@@ -632,6 +681,9 @@ export class FormComponent implements OnInit, AfterViewInit {
       // Guardar el archivo
       this.archivosCargados[documento] = archivo;
 
+      // Actualizar validación del documento
+      this.actualizarValidacionDocumento(documento);
+
       // Limpiar el input para permitir seleccionar el mismo archivo nuevamente si es necesario
       input.value = '';
 
@@ -646,6 +698,26 @@ export class FormComponent implements OnInit, AfterViewInit {
       this.archivosCargados[documento] !== null ||
       this.documentosExistentes[documento] !== undefined
     );
+  }
+
+  esDocumentoValido(documento: string): boolean {
+    return this.esDocumentoCargado(documento);
+  }
+
+  private actualizarValidacionDocumento(documento: string) {
+    const controlName = `documento_${documento
+      .replace(/\s+/g, '_')
+      .replace(/[^\w]/g, '')}`;
+    const control = this.formulario.get(controlName);
+    if (control) {
+      if (this.esDocumentoCargado(documento)) {
+        control.setValue('valid');
+        control.setErrors(null);
+      } else {
+        control.setValue('');
+        control.setErrors({ required: true });
+      }
+    }
   }
 
   getNombreArchivo(documento: string): string {
@@ -671,6 +743,9 @@ export class FormComponent implements OnInit, AfterViewInit {
     if (this.documentosExistentes[documento]) {
       delete this.documentosExistentes[documento];
     }
+
+    // Actualizar validación del documento
+    this.actualizarValidacionDocumento(documento);
   }
 
   // Método para verificar si es un documento existente (no un archivo nuevo)
@@ -686,9 +761,38 @@ export class FormComponent implements OnInit, AfterViewInit {
     return this.documentosExistentes[documento] || null;
   }
 
+  // Método para verificar si un campo es inválido y el formulario ha sido enviado
+  esCampoInvalido(nombreCampo: string): boolean {
+    const campo = this.formulario.get(nombreCampo);
+    return !!(this.formularioEnviado && campo && campo.invalid);
+  }
+
+  getDocumentosCargados(): number {
+    return this.documentosRequeridos.filter((doc) =>
+      this.esDocumentoCargado(doc)
+    ).length;
+  }
+
+  getPorcentajeProgreso(): number {
+    const total = this.documentosRequeridos.length;
+    const cargados = this.getDocumentosCargados();
+    return total > 0 ? Math.round((cargados / total) * 100) : 0;
+  }
+
   // Enviar formulario
   submit() {
-    if (this.formulario.valid) {
+    this.formularioEnviado = true;
+
+    // Validar documentos requeridos
+    let documentosValidos = true;
+    this.documentosRequeridos.forEach((doc) => {
+      this.actualizarValidacionDocumento(doc);
+      if (!this.esDocumentoCargado(doc)) {
+        documentosValidos = false;
+      }
+    });
+
+    if (this.formulario.valid && documentosValidos) {
       // Usar getRawValue() para incluir campos deshabilitados
       const formData = { ...this.formulario.getRawValue() };
       delete formData.lenguaSearch;
@@ -716,7 +820,7 @@ export class FormComponent implements OnInit, AfterViewInit {
 
         // Agregar logging para depurar
         console.log('Datos que se envían a la API:', formData);
-        console.log('Archivos que se envían:', this.archivosCargados);
+        console.log('Archivos que se envían a la API:', this.archivosCargados);
 
         // Usar el nuevo método que incluye archivos
         this.api.actualizarAlumno(formData, this.archivosCargados).subscribe({
@@ -780,7 +884,7 @@ export class FormComponent implements OnInit, AfterViewInit {
               icon: 'success',
               confirmButtonText: 'Aceptar',
             });
-            this.router.navigate(['/list']);
+            this.router.navigate(['/']);
           },
           error: (error) => {
             console.error('Error al crear alumno:', error);
@@ -815,24 +919,23 @@ export class FormComponent implements OnInit, AfterViewInit {
         });
       }
     } else {
-      Swal.fire({
-        title: 'Formulario incompleto',
-        text: 'Por favor complete todos los campos requeridos',
-        icon: 'warning',
-        confirmButtonText: 'Aceptar',
-      });
+      this.formulario.markAllAsTouched();
+
+      if (!this.formulario.valid) {
+        Swal.fire({
+          title: 'Formulario incompleto',
+          text: 'Por favor complete todos los campos requeridos',
+          icon: 'warning',
+          confirmButtonText: 'Aceptar',
+        });
+      } else if (!documentosValidos) {
+        Swal.fire({
+          title: 'Documentos faltantes',
+          text: 'Por favor sube todos los documentos requeridos',
+          icon: 'warning',
+          confirmButtonText: 'Aceptar',
+        });
+      }
     }
-  }
-
-  getDocumentosCargados(): number {
-    return this.documentosRequeridos.filter((doc) =>
-      this.esDocumentoCargado(doc)
-    ).length;
-  }
-
-  getPorcentajeProgreso(): number {
-    const total = this.documentosRequeridos.length;
-    const cargados = this.getDocumentosCargados();
-    return total > 0 ? Math.round((cargados / total) * 100) : 0;
   }
 }

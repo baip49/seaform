@@ -84,12 +84,15 @@ export class PantallaInicialComponent {
             },
           });
         } else {
+          // Determinar el tipoIngreso basado en la selección
+          const tipoIngreso =
+            formData.tipo === 'true' ? 'primera-vez' : 'otra-institucion';
+
           // Navegar al formulario sin datos previos
           this.router.navigate(['/form'], {
             state: {
               datosAlumno: null,
-              tipoIngreso:
-                formData.tipo === 'true' ? 'primera-vez' : 'otra-institucion',
+              tipoIngreso: tipoIngreso,
             },
           });
         }
