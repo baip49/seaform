@@ -1,0 +1,116 @@
+<div
+  class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center p-4 relative overflow-hidden"
+>
+  <!-- Logo de fondo más grande -->
+  <div
+    class="fixed left-0 top-0 w-full h-full opacity-10 z-0 flex items-center justify-start pointer-events-none"
+  >
+    <img
+      src="/assets/login-bg.png"
+      alt="Sea Logo"
+      class="w-auto h-full object-cover"
+    />
+  </div>
+
+  <!-- Overlay sutil para mantener contraste -->
+  <div
+    class="absolute inset-0 bg-gradient-to-r from-slate-900/20 via-transparent to-slate-900/40 z-5"
+  ></div>
+
+  <!-- Elementos decorativos adicionales -->
+  <div class="absolute inset-0 opacity-50 z-5">
+    <div
+      class="absolute top-20 right-20 w-32 h-32 border border-white/20 rounded-full"
+    ></div>
+    <div
+      class="absolute bottom-32 right-32 w-24 h-24 border border-white/20 rounded-full"
+    ></div>
+    <div
+      class="absolute top-1/3 right-1/4 w-16 h-16 border border-white/10 rounded-full"
+    ></div>
+  </div>
+
+  <!-- Formulario de login -->
+  <div class="w-full max-w-2xl z-10 relative">
+    <!-- Título SEA -->
+    <div class="text-center mb-16">
+      <h1 class="text-9xl font-bold text-white tracking-wider">SEA</h1>
+      <p class="text-2xl text-white mt-2">Sistema de Enseñanza Abierta</p>
+    </div>
+
+    <!-- Formulario -->
+    <div class="space-y-8">
+      <!-- Campo Usuario -->
+      <div class="relative">
+        <div
+          class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none"
+        >
+          <img
+            src="assets/user.png"
+            alt="User Icon"
+            class="h-7 w-7 text-blue-400"
+          />
+        </div>
+        <input
+          type="text"
+          placeholder="Usuario"
+          class="w-full pl-16 pr-6 py-6 text-xl bg-transparent rounded-xl text-white placeholder-blue-300 inset-ring-3 inset-ring-blue-500 hover:ring-3 hover:ring-white/80 focus:outline-none focus:border-white focus:inset-ring-6 focus:inset-ring-white focus:ring-3 focus:ring-blue-500 transition-all duration-400"
+        />
+      </div>
+
+      <!-- Campo Contraseña -->
+      <div class="relative">
+        <div
+          class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none"
+        >
+          <img
+            src="assets/lock.png"
+            alt="Lock Icon"
+            class="h-7 w-7 text-blue-400"
+          />
+        </div>
+        <input
+          type="password"
+          placeholder="Contraseña"
+          class="w-full pl-16 pr-6 py-6 text-xl bg-transparent rounded-xl text-white placeholder-blue-300 inset-ring-3 inset-ring-blue-500 hover:ring-3 hover:ring-white/80 focus:outline-none focus:border-white focus:inset-ring-6 focus:inset-ring-white focus:ring-3 focus:ring-blue-500 transition-all duration-400"
+        />
+      </div>
+
+      <!-- Checkbox recordar contraseña -->
+      <div class="flex items-center">
+        <div class="relative">
+          <input
+            type="checkbox"
+            id="remember"
+            class="peer h-6 w-6 bg-transparent rounded-xl border-3 border-blue-500 focus:ring-3 focus:ring-white/80 focus:outline-none focus:border-white hover:ring-3 hover:ring-white/60 transition-all duration-150 cursor-pointer appearance-none checked:bg-green-700 checked:border-green-500"
+          />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="3"
+            stroke="currentColor"
+            class="absolute inset-0 h-4 w-4 m-1 text-white opacity-0 transition-opacity duration-400 pointer-events-none peer-checked:opacity-100"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m4.5 12.75 6 6 9-13.5"
+            />
+          </svg>
+        </div>
+        <label for="remember" class="ml-2 text-lg text-blue-300 cursor-pointer">
+          Recordar mi contraseña
+        </label>
+      </div>
+
+      <!-- Botón ENTRAR -->
+      <button
+        type="submit"
+        class="w-full py-6 bg-green-700 rounded-xl text-white placeholder-green-300 inset-ring-3 inset-ring-green-500 hover:ring-3 hover:ring-white hover:scale-105 focus:outline-none focus:border-white focus:inset-ring-6 focus:inset-ring-white focus:ring-3 focus:ring-green-500 transform-gpu focus:scale-101 transition-all duration-400 cursor-pointer tracking-wider text-xl font-bold"
+      >
+        INICIAR SESIÓN
+      </button>
+    </div>
+  </div>
+</div>

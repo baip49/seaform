@@ -678,8 +678,8 @@ export class FormComponent implements OnInit, AfterViewInit {
   esDocumentoCargado(documento: string): boolean {
     // Verificar si hay un archivo nuevo cargado O si existe en la base de datos
     return (
-      this.archivosCargados[documento] !== null ||
-      this.documentosExistentes[documento] !== undefined
+      !!this.archivosCargados[documento] ||
+      !!this.documentosExistentes[documento]
     );
   }
 
