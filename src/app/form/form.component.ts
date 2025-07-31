@@ -196,40 +196,131 @@ export class FormComponent implements OnInit, AfterViewInit {
     if (this.datosAlumno) {
       setTimeout(() => {
         this.configurarControlesCondicionales();
-        
-        // Mostrar Sweet Alert si es edición
-        if (this.esEdicion) {
+        if (this.esEdicion && this.tipoIngreso === 'edicion') {
+          // Solo mostrar alerta de edición cuando vengan del ListComponent
           this.mostrarAlertaEdicion();
+        } else {
+          // Para estudiantes con matrícula que completan su registro
+          this.mostrarAlertaRegistro();
         }
       }, 0);
+    } else {
+      // Si no hay datos del alumno, es un registro nuevo
+      setTimeout(() => {
+        this.mostrarAlertaRegistroNuevo();
+      }, 100);
     }
   }
 
   private mostrarAlertaEdicion() {
     if (this.datosAlumno) {
       Swal.fire({
-        title: '¡Modo de edición activado!',
+        title: '¡Estás editando información!',
         html: `
           <div class="text-left space-y-2">
             <div class="bg-blue-50 p-3 rounded">
-              <p><strong>${this.datosAlumno.Nombre} ${this.datosAlumno.ApellidoPaterno} ${this.datosAlumno.ApellidoMaterno || ''}</strong></p>
-              <p class="text-sm text-gray-600">CURP: ${this.datosAlumno.CURP}</p>
-              <p class="text-sm text-gray-600">Matrícula: ${this.datosAlumno.Matricula || 'Sin matrícula'}</p>
+              <p><strong>${
+                this.datosAlumno.Nombre || this.datosAlumno.Nombres
+              } ${this.datosAlumno.ApellidoPaterno} ${
+          this.datosAlumno.ApellidoMaterno || ''
+        }</strong></p>
+              <p class="text-sm text-gray-600">CURP: ${
+                this.datosAlumno.CURP
+              }</p>
+              <p class="text-sm text-gray-600">Matrícula: ${
+                this.datosAlumno.Matricula || 'Sin matrícula'
+              }</p>
             </div>
           </div>
-          <p class="mt-3 text-gray-700">Puedes modificar la información y guardar los cambios.</p>
+          <p class="mt-3 text-gray-700">Modifica los campos necesarios y guarda los cambios.</p>
         `,
         icon: 'info',
         showCancelButton: true,
         confirmButtonText: 'Continuar editando',
         cancelButtonText: 'Volver a la lista',
-        confirmButtonColor: '#10b981',
-        cancelButtonColor: '#6b7280'
+        confirmButtonColor: '#3b82f6',
+        cancelButtonColor: '#6b7280',
+        width: '500px',
+        customClass: {
+          popup: 'text-sm',
+        },
       }).then((result) => {
         if (result.dismiss === Swal.DismissReason.cancel) {
           this.router.navigate(['/list']);
         }
       });
+    }
+  }
+
+  private mostrarAlertaRegistro() {
+    if (this.datosAlumno) {
+      const tipoIngresoTexto = this.obtenerTextoTipoIngreso();
+
+      Swal.fire({
+        title: '¡Completa tu registro!',
+        html: `
+          <div class="text-left space-y-2">
+            <div class="bg-green-50 p-3 rounded">
+              <p><strong>${
+                this.datosAlumno.Nombre || this.datosAlumno.Nombres
+              } ${this.datosAlumno.ApellidoPaterno} ${
+          this.datosAlumno.ApellidoMaterno || ''
+        }</strong></p>
+              <p class="text-sm text-gray-600">CURP: ${
+                this.datosAlumno.CURP
+              }</p>
+              <p class="text-sm text-gray-600">Tipo: ${tipoIngresoTexto}</p>
+            </div>
+          </div>
+          <p class="mt-3 text-gray-700">Rellena los campos faltantes para completar tu registro en el Sistema de Enseñanza Abierta.</p>
+        `,
+        icon: 'success',
+        confirmButtonText: 'Comenzar registro',
+        confirmButtonColor: '#10b981',
+        width: '500px',
+        customClass: {
+          popup: 'text-sm',
+        },
+      });
+    }
+  }
+
+  private mostrarAlertaRegistroNuevo() {
+    const tipoIngresoTexto = this.obtenerTextoTipoIngreso();
+
+    Swal.fire({
+      title: '¡Bienvenido al registro!',
+      html: `
+        <div class="text-left space-y-2">
+          <div class="bg-indigo-50 p-3 rounded">
+            <p class="text-sm text-gray-600"><strong>Tipo de ingreso:</strong> ${tipoIngresoTexto}</p>
+            <p class="text-sm text-gray-600"><strong>Documentos requeridos:</strong> ${this.documentosRequeridos.length}</p>
+          </div>
+        </div>
+        <p class="mt-3 text-gray-700">Completa todos los campos del formulario para finalizar tu registro en COBACH.</p>
+      `,
+      icon: 'info',
+      confirmButtonText: 'Comenzar',
+      confirmButtonColor: '#6366f1',
+      width: '500px',
+      customClass: {
+        popup: 'text-sm',
+      },
+    });
+  }
+
+  private obtenerTextoTipoIngreso(): string {
+    switch (this.tipoIngreso) {
+      case 'matricula':
+        return 'Estudiante con matrícula existente';
+      case 'primera-vez':
+        return 'Primera vez en bachillerato';
+      case 'otra-institucion':
+        return 'Traslado de otra institución';
+      case 'edicion':
+        return 'Actualización de datos';
+      default:
+        return 'Registro de alumno';
     }
   }
 

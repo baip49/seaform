@@ -1,17 +1,15 @@
 import { Component } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../services/api/api';
 import { HeaderComponent } from '../header/header.component';
+import { Subject, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs';
+import { of } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-pantalla-inicial',
-  imports: [ReactiveFormsModule, HeaderComponent],
+  imports: [ReactiveFormsModule, HeaderComponent, CommonModule],
   templateUrl: './pantalla-inicial.component.html',
   styleUrl: './pantalla-inicial.component.css',
 })
@@ -20,6 +18,12 @@ export class PantallaInicialComponent {
   pantallaInicial: FormGroup;
   cargando = false;
   error = '';
+  validandoMatricula = false;
+  matriculaValida = false;
+  datosAlumnoEncontrado: any = null;
+  
+  // Subject para validación de matrícula con debounce
+  private validarMatricula = new Subject<string>();
 
   constructor(
     private fb: FormBuilder,
@@ -31,56 +35,117 @@ export class PantallaInicialComponent {
       matricula: [''],
       tipo: ['', [Validators.required]],
     });
-  }
 
-  toggleEnabled(name: string, value: boolean) {
-    const control = this.pantallaInicial.get(name);
-    if (control) {
-      // Usar setTimeout para diferir la actualización al siguiente ciclo
-      setTimeout(() => {
-        if (value) {
-          control.enable();
-          control.setValidators([Validators.required]);
+    // Validación de matrícula con debounce
+    this.validarMatricula
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        switchMap((matricula) => {
+          if (matricula && matricula.length >= 3) {
+            this.validandoMatricula = true;
+            this.error = '';
+            return this.api.porMatricula(matricula).pipe(
+              catchError((error) => {
+                console.log('Error al validar matrícula:', error);
+                return of(null);
+              })
+            );
+          } else {
+            this.matriculaValida = false;
+            this.datosAlumnoEncontrado = null;
+            return of(null);
+          }
+        })
+      )
+      .subscribe((datos) => {
+        this.validandoMatricula = false;
+        if (datos && datos.CURP) {
+          this.matriculaValida = true;
+          this.datosAlumnoEncontrado = datos;
+          this.error = '';
         } else {
-          control.disable();
-          control.setValue('');
-          control.clearValidators();
+          this.matriculaValida = false;
+          this.datosAlumnoEncontrado = null;
+          if (this.pantallaInicial.get('matricula')?.value?.length >= 3) {
+            this.error = 'La matrícula ingresada no existe en el sistema COBACH';
+          }
         }
-        control.updateValueAndValidity();
-      }, 0);
-    }
+      });
   }
 
-  clearField(name: string) {
-    const control = this.pantallaInicial.get(name);
-    if (control) {
-      control.setValue('');
+  toggleEnabled(field: string, enabled: boolean) {
+    const control = this.pantallaInicial.get(field);
+    if (enabled) {
+      control?.enable();
+      if (field === 'matricula') {
+        control?.setValidators([Validators.required]);
+      }
+    } else {
+      control?.disable();
+      control?.clearValidators();
+      control?.setValue('');
+      // Limpiar validación de matrícula
+      if (field === 'matricula') {
+        this.matriculaValida = false;
+        this.datosAlumnoEncontrado = null;
+        this.error = '';
+      }
     }
+    control?.updateValueAndValidity();
   }
 
-  tipo(value: boolean) {
-    console.log(value);
+  tipo(primeraVez: boolean) {
+    // Solo almacenar el valor, no necesitamos hacer nada más aquí
+  }
+
+  // Método para validar matrícula cuando el usuario escriba
+  onMatriculaInput(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const matricula = target.value.trim();
+    
+    if (matricula.length >= 3) {
+      this.validarMatricula.next(matricula);
+    } else {
+      this.matriculaValida = false;
+      this.datosAlumnoEncontrado = null;
+      this.error = '';
+    }
   }
 
   async submit() {
     if (this.pantallaInicial.valid) {
       const formData = this.pantallaInicial.value;
 
+      // Validación adicional para matrícula
+      if (formData.tieneMatricula === 'true') {
+        if (!formData.matricula) {
+          this.error = 'Por favor ingresa tu matrícula';
+          return;
+        }
+        
+        if (this.validandoMatricula) {
+          this.error = 'Esperando validación de matrícula...';
+          return;
+        }
+        
+        if (!this.matriculaValida || !this.datosAlumnoEncontrado) {
+          this.error = 'La matrícula ingresada no es válida o no existe en el sistema';
+          return;
+        }
+      }
+
       try {
         this.cargando = true;
         this.error = '';
 
-        if (formData.tieneMatricula === 'true' && formData.matricula) {
-          // Obtener datos del alumno por matrícula
-          const datosAlumno = await this.api
-            .porMatricula(formData.matricula)
-            .toPromise();
-
-          // Navegar al formulario con los datos del alumno
+        if (formData.tieneMatricula === 'true' && this.datosAlumnoEncontrado) {
+          // Navegar al formulario con los datos del alumno para COMPLETAR registro
           this.router.navigate(['/form'], {
             state: {
-              datosAlumno: datosAlumno,
+              datosAlumno: this.datosAlumnoEncontrado,
               tipoIngreso: 'matricula',
+              esEdicion: false, // CAMBIO: No es edición, es completar registro
             },
           });
         } else {
@@ -93,16 +158,18 @@ export class PantallaInicialComponent {
             state: {
               datosAlumno: null,
               tipoIngreso: tipoIngreso,
+              esEdicion: false,
             },
           });
         }
       } catch (error) {
-        console.error('Error al obtener datos del alumno:', error);
-        this.error =
-          'No se pudo obtener la información del alumno. Verifica la matrícula.';
+        console.error('Error:', error);
+        this.error = 'Ocurrió un error inesperado. Intenta nuevamente.';
       } finally {
         this.cargando = false;
       }
+    } else {
+      this.error = 'Por favor completa todos los campos requeridos';
     }
   }
 }

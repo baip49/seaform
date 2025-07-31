@@ -29,6 +29,7 @@
                 value="true"
                 class="peer/tieneMatricula hidden"
                 required
+                #tieneMatricula
               />
               <span
                 class="bg-green-300/50 px-3 py-2 rounded-xl flex justify-center items-center text-xl peer-checked/tieneMatricula:bg-green-600 peer-checked/tieneMatricula:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-green-800 hover:shadow-lg w-full"
@@ -84,7 +85,7 @@
           </div>
         </div>
 
-        <!-- Matrícula -->
+        <!-- Contenido dinámico -->
         <div class="rounded-lg p-3 w-full flex flex-col items-center">
           <!-- Mostrar error si existe -->
           @if (error) {
@@ -93,64 +94,111 @@
           >
             {{ error }}
           </div>
-          } @if (pantallaInicial.get('matricula')?.disabled === false) {
-          <input
-            type="text"
-            formControlName="matricula"
-            id="matricula"
-            class="w-full max-w-md px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
-            placeholder="Matrícula COBACH"
-            required
-          />
-          <div class="text-gray-600 text-lg">Ingresa tu matrícula COBACH</div>
           }
-          <!-- Tipo -->
-          @else {
-          <label for="tipo1" class="px-1 text-lg"
-            >¿Qué opción te describe mejor?</label
-          >
-          <div class="rounded-lg p-3 flex justify-center">
-            <div class="flex space-y-1 sm:space-y-0 sm:space-x-3 flex-col sm:flex-row">
-              <label class="flex items-center">
-                <input
-                  (click)="tipo(true)"
-                  formControlName="tipo"
-                  type="radio"
-                  name="tipo"
-                  id="tipo1"
-                  value="true"
-                  class="peer/primeraVez hidden"
-                  required
-                />
-                <span
-                  class="bg-blue-300 px-3 py-2 rounded-xl flex justify-center items-center text-lg text-center peer-checked/primeraVez:bg-sky-600 peer-checked/primeraVez:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-sky-800 hover:shadow-lg w-full"
-                >
-                  Es mi primera vez en un bachillerato</span
-                >
-              </label>
-              <label class="flex items-center">
-                <input
-                  (click)="tipo(false)"
-                  formControlName="tipo"
-                  type="radio"
-                  name="tipo"
-                  id="tipo2"
-                  value="false"
-                  class="peer/tipo2 hidden"
-                  required
-                />
-                <span
-                  class="bg-blue-300 px-3 py-2 rounded-xl flex justify-center items-center text-lg text-center peer-checked/tipo2:bg-sky-600 peer-checked/tipo2:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-sky-800 hover:shadow-lg w-full"
-                >
-                  Vengo de otra institución</span
-                >
-              </label>
+          
+          <!-- Campo de matrícula - se muestra cuando tiene matrícula -->
+          @if (pantallaInicial.get('tieneMatricula')?.value === 'true') {
+          <div class="w-full flex flex-col items-center">
+            <div class="relative w-full max-w-md">
+              <input
+                type="text"
+                formControlName="matricula"
+                id="matricula"
+                (input)="onMatriculaInput($event)"
+                class="w-full px-4 py-3 border border-gray-300 rounded-md hover:ring focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white placeholder:text-gray-400 disabled:opacity-50 transition"
+                [ngClass]="{
+                  'border-green-500 ring-2 ring-green-500': matriculaValida && !validandoMatricula,
+                  'border-red-500 ring-2 ring-red-500': !matriculaValida && pantallaInicial.get('matricula')?.value?.length >= 3 && !validandoMatricula,
+                  'border-yellow-500': validandoMatricula
+                }"
+                placeholder="Matrícula COBACH"
+                required
+              />
+              
+              <!-- Indicador de validación -->
+              <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
+                @if (validandoMatricula) {
+                <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-600"></div>
+                } @else if (matriculaValida && pantallaInicial.get('matricula')?.value) {
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                } @else if (!matriculaValida && pantallaInicial.get('matricula')?.value?.length >= 3) {
+                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+                }
+              </div>
+            </div>
+            
+            <!-- Información de la matrícula -->
+            <div class="text-center mt-2">
+              @if (validandoMatricula) {
+              <div class="text-yellow-600 text-sm">Validando matrícula...</div>
+              } @else if (matriculaValida && datosAlumnoEncontrado) {
+              <div class="text-green-600 text-sm mb-1">✓ Matrícula válida</div>
+              <div class="text-gray-700 text-sm">
+                <strong>{{ datosAlumnoEncontrado.Nombre }} {{ datosAlumnoEncontrado.ApellidoPaterno }}</strong>
+              </div>
+              <div class="text-gray-600 text-xs">CURP: {{ datosAlumnoEncontrado.CURP }}</div>
+              } @else {
+              <div class="text-gray-600 text-lg">Ingresa tu matrícula COBACH</div>
+              }
             </div>
           </div>
           }
+          
+          <!-- Opciones de tipo - se muestra cuando NO tiene matrícula -->
+          @if (pantallaInicial.get('tieneMatricula')?.value === 'false') {
+          <div class="w-full flex flex-col items-center">
+            <label for="tipo1" class="px-1 text-lg mb-4"
+              >¿Qué opción te describe mejor?</label
+            >
+            <div class="rounded-lg p-3 flex justify-center w-full">
+              <div class="flex space-y-1 sm:space-y-0 sm:space-x-3 flex-col sm:flex-row w-full max-w-2xl">
+                <label class="flex items-center flex-1">
+                  <input
+                    (click)="tipo(true)"
+                    formControlName="tipo"
+                    type="radio"
+                    name="tipo"
+                    id="tipo1"
+                    value="true"
+                    class="peer/primeraVez hidden"
+                    required
+                  />
+                  <span
+                    class="bg-blue-300 px-3 py-2 rounded-xl flex justify-center items-center text-lg text-center peer-checked/primeraVez:bg-sky-600 peer-checked/primeraVez:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-sky-800 hover:shadow-lg w-full"
+                  >
+                    Es mi primera vez en un bachillerato</span
+                  >
+                </label>
+                <label class="flex items-center flex-1">
+                  <input
+                    (click)="tipo(false)"
+                    formControlName="tipo"
+                    type="radio"
+                    name="tipo"
+                    id="tipo2"
+                    value="false"
+                    class="peer/tipo2 hidden"
+                    required
+                  />
+                  <span
+                    class="bg-blue-300 px-3 py-2 rounded-xl flex justify-center items-center text-lg text-center peer-checked/tipo2:bg-sky-600 peer-checked/tipo2:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-sky-800 hover:shadow-lg w-full"
+                  >
+                    Vengo de otra institución</span
+                  >
+                </label>
+              </div>
+            </div>
+          </div>
+          }
+          
+          <!-- Botón de envío -->
           <button
             type="submit"
-            [disabled]="cargando || !pantallaInicial.valid"
+            [disabled]="cargando || !pantallaInicial.valid || (pantallaInicial.get('tieneMatricula')?.value === 'true' && !matriculaValida)"
             class="mt-6 bg-cyan-300 px-3 py-2 rounded-xl flex items-center text-xl focus:bg-cyan-600 focus:text-white transition hover:cursor-pointer hover:ring-2 hover:ring-cyan-800 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             @if (cargando) {
