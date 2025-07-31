@@ -259,11 +259,8 @@ src/
 ng generate component nombre-componente
 
 # Nuevo servicio
-ng generate service services/nombre-servicio
+ng generate service nombre-servicio
 
-# Nuevo guard
-ng generate guard guards/nombre-guard
-```
 
 ### Estándares de Código
 - **TypeScript strict mode** habilitado

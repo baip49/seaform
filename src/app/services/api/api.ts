@@ -45,11 +45,6 @@ export class ApiService {
     return this.http.get<any>(`${this.baseUrl}/alumnos/${matricula}`);
   }
 
-  // Actualizar alumno
-  // actualizarAlumno(alumno: any): Observable<any> {
-  //   return this.http.put<any>(`${this.baseUrl}/alumnos/actualizar`, alumno);
-  // }
-
   // Eliminar alumno
   // eliminarAlumno(matricula: string): Observable<any> {}
 
@@ -61,47 +56,76 @@ export class ApiService {
     return this.http.get<any>(`${this.baseUrl}/alumnos/curp/${curp}`);
   }
 
+  // Obtener documentos de un alumno
+  obtenerDocumentosAlumno(idAlumno: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/alumnos/documentos/${idAlumno}`);
+  }
+
+  // Obtener URL para visualizar archivo en el navegador
+  obtenerUrlVisualizarArchivo(documentoId: number): string {
+    return `${this.baseUrl}/archivos/ver/${documentoId}`;
+  }
+
+  // Obtener URL para descargar archivo
+  obtenerUrlDescargarArchivo(documentoId: number): string {
+    return `${this.baseUrl}/archivos/descargar/${documentoId}`;
+  }
+
   // Método para crear nuevo alumno con archivos
-  crearAlumno(alumnoData: any, archivos: { [key: string]: File | null }): Observable<any> {
+  crearAlumno(
+    alumnoData: any,
+    archivos: { [key: string]: File | null }
+  ): Observable<any> {
     const formData = new FormData();
-    
+
     // Agregar todos los datos del alumno directamente como campos individuales
-    Object.keys(alumnoData).forEach(key => {
+    Object.keys(alumnoData).forEach((key) => {
       if (alumnoData[key] !== null && alumnoData[key] !== undefined) {
         formData.append(key, alumnoData[key].toString());
       }
     });
-    
+
     // Agregar archivos
-    Object.keys(archivos).forEach(tipoDocumento => {
+    Object.keys(archivos).forEach((tipoDocumento) => {
       const archivo = archivos[tipoDocumento];
       if (archivo) {
-        formData.append('documentos', archivo, `${tipoDocumento}|${archivo.name}`);
+        formData.append(
+          'documentos',
+          archivo,
+          `${tipoDocumento}|${archivo.name}`
+        );
       }
     });
-    
+
     return this.http.post<any>(`${this.baseUrl}/alumnos/insertar`, formData);
   }
 
   // Método para actualizar alumno con archivos
-  actualizarAlumno(alumnoData: any, archivos: { [key: string]: File | null }): Observable<any> {
+  actualizarAlumno(
+    alumnoData: any,
+    archivos: { [key: string]: File | null }
+  ): Observable<any> {
     const formData = new FormData();
-    
+
     // Agregar todos los datos del alumno directamente como campos individuales
-    Object.keys(alumnoData).forEach(key => {
+    Object.keys(alumnoData).forEach((key) => {
       if (alumnoData[key] !== null && alumnoData[key] !== undefined) {
         formData.append(key, alumnoData[key].toString());
       }
     });
-    
+
     // Agregar archivos
-    Object.keys(archivos).forEach(tipoDocumento => {
+    Object.keys(archivos).forEach((tipoDocumento) => {
       const archivo = archivos[tipoDocumento];
       if (archivo) {
-        formData.append('documentos', archivo, `${tipoDocumento}|${archivo.name}`);
+        formData.append(
+          'documentos',
+          archivo,
+          `${tipoDocumento}|${archivo.name}`
+        );
       }
     });
-    
+
     return this.http.put<any>(`${this.baseUrl}/alumnos/actualizar`, formData);
   }
 }

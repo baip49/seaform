@@ -196,7 +196,40 @@ export class FormComponent implements OnInit, AfterViewInit {
     if (this.datosAlumno) {
       setTimeout(() => {
         this.configurarControlesCondicionales();
+        
+        // Mostrar Sweet Alert si es edición
+        if (this.esEdicion) {
+          this.mostrarAlertaEdicion();
+        }
       }, 0);
+    }
+  }
+
+  private mostrarAlertaEdicion() {
+    if (this.datosAlumno) {
+      Swal.fire({
+        title: '¡Modo de edición activado!',
+        html: `
+          <div class="text-left space-y-2">
+            <div class="bg-blue-50 p-3 rounded">
+              <p><strong>${this.datosAlumno.Nombre} ${this.datosAlumno.ApellidoPaterno} ${this.datosAlumno.ApellidoMaterno || ''}</strong></p>
+              <p class="text-sm text-gray-600">CURP: ${this.datosAlumno.CURP}</p>
+              <p class="text-sm text-gray-600">Matrícula: ${this.datosAlumno.Matricula || 'Sin matrícula'}</p>
+            </div>
+          </div>
+          <p class="mt-3 text-gray-700">Puedes modificar la información y guardar los cambios.</p>
+        `,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Continuar editando',
+        cancelButtonText: 'Volver a la lista',
+        confirmButtonColor: '#10b981',
+        cancelButtonColor: '#6b7280'
+      }).then((result) => {
+        if (result.dismiss === Swal.DismissReason.cancel) {
+          this.router.navigate(['/list']);
+        }
+      });
     }
   }
 
