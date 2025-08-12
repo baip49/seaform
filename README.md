@@ -38,31 +38,32 @@ El sistema SEA facilita el proceso de registro de alumnos mediante un formulario
 - API FastAPI corriendo en `http://127.0.0.1:8000` [seaapi](https://github.com/baip49/seaapi)
 
 ### Instalación
-1. **Instalar prerrequisitos"
+1. **Instalar prerrequisitos**
 Tanto Node.js como Angular CLI son necesarios para ejecutar la aplicación, por lo que deberás instalarlos antes de continuar. En el caso de la API (FastAPI), se deberá configurar debidamente tal y como se explica en el README en su repositorio.
+
 Nota: Es probable que al ejecutar la aplicación en la terminal aparezca algo como: "La ejecución de scripts no está habilitada", por lo que se deberá activar mediante el siguiente comando en una terminal de PowerShell ejecutada como administrador:
 ```bash
 Set-ExecutionPolicy Unrestricted
 ```
 
-1. **Clonar el repositorio**
+2. **Clonar el repositorio**
 ```bash
 git clone https://github.com/baip49/seaform.git
 cd seaform
 ```
 
-2. **Instalar dependencias**
+3. **Instalar dependencias**
 ```bash
 npm install
 ```
 
-3. **Configurar la API**
+4. **Configurar la API**
 Verificar que la URL base en `src/app/services/api/api.ts` apunte a tu servidor FastAPI:
 ```typescript
 private baseUrl = 'http://127.0.0.1:8000';
 ```
 
-4. **Ejecutar en desarrollo**
+5. **Ejecutar en desarrollo**
 ```bash
 ng serve
 ```
