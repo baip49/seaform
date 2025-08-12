@@ -33,11 +33,17 @@ El sistema SEA facilita el proceso de registro de alumnos mediante un formulario
 ## 🚀 Instalación y Configuración
 
 ### Prerrequisitos
-- Node.js (versión 18 o superior)
-- Angular CLI 19
+- Node.js (v18 en adelante)
+- Angular CLI v19.0.3
 - API FastAPI corriendo en `http://127.0.0.1:8000` [seaapi](https://github.com/baip49/seaapi)
 
 ### Instalación
+1. **Instalar prerrequisitos"
+Tanto Node.js como Angular CLI son necesarios para ejecutar la aplicación, por lo que deberás instalarlos antes de continuar. En el caso de la API (FastAPI), se deberá configurar debidamente tal y como se explica en el README en su repositorio.
+Nota: Es probable que al ejecutar la aplicación en la terminal aparezca algo como: "La ejecución de scripts no está habilitada", por lo que se deberá activar mediante el siguiente comando en una terminal de PowerShell ejecutada como administrador:
+```bash
+Set-ExecutionPolicy Unrestricted
+```
 
 1. **Clonar el repositorio**
 ```bash
